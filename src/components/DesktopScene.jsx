@@ -895,14 +895,14 @@ const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onC
 
       {/* Pantalla Interactiva alojada físicamente en el monitor (oculta cuando el Menú Principal está activo) */}
       {!isInMainMenu && (
-        <group position={[0, -0.92, 0.282]}>
+        <group position={[0, 0.02, 0.282]}>
           <Html
             transform
             position={[0, 0, 0]}
             scale={0.11953}
             pointerEvents={isScreenActive ? 'auto' : 'none'}
             wrapperClass={`xp-screen-container ${isScreenActive ? 'pointer-events-auto' : 'pointer-events-none'}`}
-            zIndexRange={[40, 0]}
+            zIndexRange={[10, 0]}
           >
             <div
               style={{ width: '1024px', height: '629px' }}
@@ -1127,14 +1127,6 @@ const InteractiveCamera = ({ onClick, isZooming, isActive, onHover, onUnhover })
         color={hovered ? '#ffffff' : '#22ff77'}
       />
 
-      {/* Rótulo de texto interactivo con resplandor */}
-      {hovered && !isZooming && (
-        <group position={[0, 0.5, 0]} rotation={[0, -0.9, 0]}>
-          <Text fontSize={0.075} color="#ffffff" anchorX="center" anchorY="middle">
-            {isActive ? "> [CLIC] DESACTIVAR CÁMARA" : "> [CLIC] ACTIVAR VIDEOCÁMARA"}
-          </Text>
-        </group>
-      )}
     </group>
   );
 };
@@ -1623,7 +1615,7 @@ export default function DesktopScene() {
 
       {/* In-Game HUD Interaction Prompt (oculto si la cámara está activa o en el menú) */}
       {!isCamcorderActive && hoveredItem && animatingTo === 'none' && activeOverlay === 'none' && !isInMainMenu && (
-        <div className="fixed bottom-10 left-0 right-0 z-30 flex justify-center pointer-events-none select-none animate-in fade-in duration-200">
+        <div className="fixed bottom-10 left-0 right-0 z-50 flex justify-center pointer-events-none select-none animate-in fade-in duration-200">
           <div className="bg-black/75 border border-white/20 text-[#eaeaea] px-6 py-2 rounded-xs font-typewriter text-xs sm:text-sm tracking-wider shadow-[0_4px_30px_rgba(0,0,0,0.95)] backdrop-blur-sm flex items-center gap-2">
             <span>Pulsa</span>
             <span className="text-white font-bold drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
@@ -1643,7 +1635,7 @@ export default function DesktopScene() {
 
       {/* Botón flotante para alejarse del monitor y volver a la vista del escritorio */}
       {(animatingTo === 'terminal' || activeOverlay === 'terminal') && (
-        <div className="fixed top-5 right-5 z-40 animate-in fade-in duration-300 pointer-events-auto">
+        <div className="fixed top-5 right-5 z-50 animate-in fade-in duration-300 pointer-events-auto">
           <button
             onClick={handleClose}
             className="bg-black/90 hover:bg-[#8a0303] text-white border border-[#3b5998] hover:border-red-500 px-4 py-2.5 rounded shadow-2xl font-mono text-xs tracking-widest uppercase flex items-center gap-2 cursor-pointer transition-all duration-200 backdrop-blur-md group"
@@ -1657,7 +1649,7 @@ export default function DesktopScene() {
 
       {/* Botón discreto en la esquina superior izquierda para regresar al Menú Principal */}
       {!isInMainMenu && activeOverlay === 'none' && animatingTo === 'none' && !isCamcorderActive && (
-        <div className="fixed top-5 left-5 z-40 animate-in fade-in duration-300 pointer-events-auto">
+        <div className="fixed top-5 left-5 z-50 animate-in fade-in duration-300 pointer-events-auto">
           <button
             onClick={() => setIsInMainMenu(true)}
             className="bg-black/80 hover:bg-white/15 text-white/70 hover:text-white border border-white/20 px-3.5 py-1.5 rounded-sm font-typewriter text-xs tracking-widest uppercase flex items-center gap-2 cursor-pointer transition-all duration-200 backdrop-blur-sm shadow-lg"
