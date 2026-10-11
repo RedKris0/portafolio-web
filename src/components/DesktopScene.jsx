@@ -10,7 +10,7 @@ import OutlastMainMenu from './OutlastMainMenu.jsx';
 import WindowsXPScreen from './WindowsXPScreen.jsx';
 
 // ---- 3D Models & Enclosed Asylum Office ----
-const AsylumDoor = () => (
+const AsylumDoor = ({ isCamcorderActive = false }) => (
   <group position={[6.2, -0.35, -5.14]}>
     {/* Marco metálico de la puerta pesada de manicomio (desde el suelo y = -4 hasta y = 3.3, a la misma altura del tablero) */}
     <Box args={[3.4, 7.3, 0.26]} position={[0, 0, 0]} castShadow receiveShadow>
@@ -51,9 +51,11 @@ const AsylumDoor = () => (
     <Plane args={[2.0, 0.36]} position={[0, 2.85, 0.12]}>
       <meshStandardMaterial color="#0c0e0c" roughness={0.5} />
     </Plane>
-    <Text position={[0, 2.85, 0.13]} fontSize={0.13} color="#e6dec8">
-      PABELLÓN D // CONSULTA 04
-    </Text>
+    {isCamcorderActive && (
+      <Text position={[0, 2.85, 0.13]} fontSize={0.13} color="#e6dec8">
+        PABELLÓN D // CONSULTA 04
+      </Text>
+    )}
     {/* Haz frío de luz que se filtra por debajo y por la mirilla desde el pasillo exterior del pabellón */}
     <pointLight position={[0, -3.5, 0.4]} intensity={4.5} distance={4.2} color="#1d4d3d" />
     <pointLight position={[0, 1.55, 0.3]} intensity={2.4} distance={2.8} color="#5e1212" />
@@ -89,10 +91,12 @@ const AsylumExitSign = ({ position = [6.2, 1.95, -5.12] }) => {
   );
 };
 
-const BloodWallWritings = () => (
-  <group>
-    {/* Mensaje principal sangriento en la pared frontal sobre los bloques de hormigón (Referencia Foto 1) */}
-    <group position={[-1.2, 3.2, -5.14]}>
+const BloodWallWritings = ({ isCamcorderActive = false }) => {
+  if (!isCamcorderActive) return null;
+  return (
+    <group>
+      {/* Mensaje principal sangriento en la pared frontal sobre los bloques de hormigón (Referencia Foto 1) */}
+      <group position={[-1.2, 3.2, -5.14]}>
       {/* Palabra principal chorreante en sangre oscura */}
       <Text
         font="/assets/fonts/Nosifer.ttf"
@@ -202,7 +206,8 @@ const BloodWallWritings = () => (
       </Text>
     </group>
   </group>
-);
+  );
+};
 
 const FlickeringFluorescentFixture = ({ position = [0, 5.05, 0.8], isCamcorderActive = false }) => {
   const lightRef = useRef();
@@ -338,7 +343,7 @@ const OfficeShelf = ({ position = [9.1, -1.1, 1.5], rotation = [0, -Math.PI / 2,
   </group>
 );
 
-const InvestigationCorkboard = () => (
+const InvestigationCorkboard = ({ isCamcorderActive = false }) => (
   <group position={[1.8, 2.2, -5.14]}>
     {/* Marco de madera de la pizarra */}
     <Box args={[3.6, 2.2, 0.08]} castShadow>
@@ -367,40 +372,42 @@ const InvestigationCorkboard = () => (
     </Box>
 
     {/* Credenciales de acceso escritas en la pared debajo del tablero con fuente Humble Wall */}
-    <group position={[0, -1.45, 0.015]} rotation={[0, 0, -0.025]}>
-      <Text
-        font="/assets/fonts/HumbleWall.ttf"
-        fontSize={0.28}
-        color="#4e0505"
-        letterSpacing={0.06}
-        anchorX="center"
-        anchorY="middle"
-      >
-        USUARIO: crojas
-      </Text>
-      <Text
-        position={[0, -0.34, 0]}
-        font="/assets/fonts/HumbleWall.ttf"
-        fontSize={0.28}
-        color="#4e0505"
-        letterSpacing={0.06}
-        anchorX="center"
-        anchorY="middle"
-      >
-        PASSWORD: murkoff
-      </Text>
-
-      {/* Chorretones de sangre seca debajo de las credenciales */}
-      {[-0.65, -0.15, 0.45].map((dx, i) => (
-        <Box
-          key={i}
-          args={[0.02, 0.28 + i * 0.08, 0.003]}
-          position={[dx, -0.56 - i * 0.04, 0.002]}
+    {isCamcorderActive && (
+      <group position={[0, -1.45, 0.015]} rotation={[0, 0, -0.025]}>
+        <Text
+          font="/assets/fonts/HumbleWall.ttf"
+          fontSize={0.28}
+          color="#4e0505"
+          letterSpacing={0.06}
+          anchorX="center"
+          anchorY="middle"
         >
-          <meshStandardMaterial color="#350303" roughness={0.7} opacity={0.9} transparent />
-        </Box>
-      ))}
-    </group>
+          USUARIO: crojas
+        </Text>
+        <Text
+          position={[0, -0.34, 0]}
+          font="/assets/fonts/HumbleWall.ttf"
+          fontSize={0.28}
+          color="#4e0505"
+          letterSpacing={0.06}
+          anchorX="center"
+          anchorY="middle"
+        >
+          PASSWORD: murkoff
+        </Text>
+
+        {/* Chorretones de sangre seca debajo de las credenciales */}
+        {[-0.65, -0.15, 0.45].map((dx, i) => (
+          <Box
+            key={i}
+            args={[0.02, 0.28 + i * 0.08, 0.003]}
+            position={[dx, -0.56 - i * 0.04, 0.002]}
+          >
+            <meshStandardMaterial color="#350303" roughness={0.7} opacity={0.9} transparent />
+          </Box>
+        ))}
+      </group>
+    )}
   </group>
 );
 
@@ -616,8 +623,8 @@ const Room = ({ isCamcorderActive = false }) => (
     {/* Rótulo de SALIDA iluminado en rojo sobre la puerta pesada (ahora a y = 3.7 directamente sobre el marco) */}
     <AsylumExitSign position={[6.2, 3.7, -5.12]} />
 
-    {/* Mensajes en sangre de pacientes / Padre Martin sobre los muros */}
-    <BloodWallWritings />
+    {/* Mensajes en sangre de pacientes / Padre Martin sobre los muros (solo con videocámara) */}
+    <BloodWallWritings isCamcorderActive={isCamcorderActive} />
 
     {/* Regueros de sangre, salpicaduras y marcas de arrastre estilo Outlast */}
     <Suspense fallback={null}>
@@ -632,10 +639,10 @@ const Room = ({ isCamcorderActive = false }) => (
     </Suspense>
 
     {/* Elementos arquitectónicos y de atrezo de la oficina */}
-    <AsylumDoor />
+    <AsylumDoor isCamcorderActive={isCamcorderActive} />
     <FilingCabinet />
     <OfficeShelf />
-    <InvestigationCorkboard />
+    <InvestigationCorkboard isCamcorderActive={isCamcorderActive} />
     <AirDuctVent />
     <Suspense fallback={null}>
       <AnatomicalSkeleton />
