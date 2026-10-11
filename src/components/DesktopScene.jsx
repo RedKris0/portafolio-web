@@ -895,7 +895,7 @@ const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onC
 
       {/* Pantalla Interactiva alojada físicamente en el monitor (oculta cuando el Menú Principal está activo) */}
       {!isInMainMenu && (
-        <group position={[0, 0.02, 0.282]}>
+        <group position={[0, -0.92, 0.282]}>
           <Html
             transform
             position={[0, 0, 0]}

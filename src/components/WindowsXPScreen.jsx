@@ -390,7 +390,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
 
           {/* 2. VENTANA PRINCIPAL DE PRIMER PLANO: "Console" (100% idéntica a la captura de Outlast) */}
           <div
-            className="relative z-10 w-[640px] max-w-[95%] h-[530px] bg-black border-2 border-[#d4d0c8] shadow-[0_20px_60px_rgba(0,0,0,0.95)] flex flex-col"
+            className="relative z-10 w-[640px] max-w-[95%] h-[490px] max-h-[80%] bg-black border-2 border-[#d4d0c8] shadow-[0_20px_60px_rgba(0,0,0,0.95)] flex flex-col"
             style={{
               boxShadow: 'inset 2px 2px 0px #ffffff, inset -2px -2px 0px #808080, 8px 8px 35px rgba(0,0,0,0.9)',
             }}
