@@ -1,7 +1,11 @@
-import { Suspense, useState, useEffect, useMemo, useRef } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber';
 import { Box, Plane, Text, useCursor, RoundedBox, useGLTF, useTexture, Center, Html } from '@react-three/drei';
 import * as THREE from 'three';
+import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { prepareCharacterRig } from '../utils/characterRig.js';
+import { registerCharacterMaterials } from '../utils/legacyCharacterMaterials.js';
+import SceneLoading, { SceneReady } from './SceneLoading.jsx';
 import { playSound } from '../utils/audioManager.js';
 import InvestigationFiles from './InvestigationFiles.jsx';
 import OutlastCamcorderOverlay from './OutlastCamcorderOverlay.jsx';
@@ -430,33 +434,97 @@ const AirDuctVent = () => (
   </group>
 );
 
-const AnatomicalSkeleton = () => {
-  const { scene } = useGLTF('/assets/models/skeleton.glb');
-  const skeletonModel = useMemo(() => scene.clone(true), [scene]);
+const AnatomicalSkeleton = ({ scare }) => {
+  const { scene } = useGLTF('/assets/models/black_death_rigged.glb', true, true, registerCharacterMaterials);
+  const character = useRef();
+  const sequence = useRef(null);
+  const { camera } = useThree();
+  const animationData = useLoader(THREE.FileLoader, '/assets/animations/black-death.json');
+  const animations = useMemo(
+    () => JSON.parse(animationData).map((clip) => THREE.AnimationClip.parse(clip)),
+    [animationData],
+  );
+  const actions = useRef(null);
+  const { skeletonModel, scale, offset } = useMemo(() => {
+    const model = cloneSkeleton(scene);
+    prepareCharacterRig(model);
+    const bounds = new THREE.Box3().setFromObject(model);
+    const size = bounds.getSize(new THREE.Vector3());
+    const center = bounds.getCenter(new THREE.Vector3());
+    return {
+      skeletonModel: model,
+      scale: 7.8 / Math.max(size.y, 0.001),
+      offset: [-center.x, -bounds.min.y, -center.z],
+    };
+  }, [scene]);
+  const mixer = useMemo(() => new THREE.AnimationMixer(skeletonModel), [skeletonModel]);
+
+  useFrame((_, delta) => {
+    const current = sequence.current;
+    if (current) {
+      current.elapsed += delta;
+      if (!current.started && current.elapsed >= 0.45) {
+        current.started = true;
+        const { idle, jumpscare } = actions.current;
+        jumpscare.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).play();
+        idle.crossFadeTo(jumpscare, 0.12, false);
+      }
+      if (current.elapsed > 2.2) {
+        character.current.rotation.y = Math.PI * 0.25;
+        sequence.current = null;
+        scare.current = null;
+      }
+    }
+    mixer.update(Math.min(delta, 0.1));
+    if (scare.current) {
+      skeletonModel.updateWorldMatrix(true, true);
+      skeletonModel.getObjectByName('Head_06')?.getWorldPosition(scare.current.lookAt);
+    }
+  });
 
   useEffect(() => {
     skeletonModel.traverse((object) => {
       if (!object.isMesh) return;
       object.castShadow = true;
       object.receiveShadow = true;
-      if (object.material) {
-        object.material.roughness = 0.85;
-      }
+      // Rest-pose bounds do not cover the jumpscare's moving limbs.
+      object.frustumCulled = false;
     });
-  }, [skeletonModel]);
+    const idle = mixer.clipAction(animations.find(clip => clip.name === 'Old Man Idle'));
+    const jumpscare = mixer.clipAction(animations.find(clip => clip.name === 'Springtrap Jumpscare'));
+    idle.setLoop(THREE.LoopRepeat, Infinity).play();
+    jumpscare.setLoop(THREE.LoopOnce, 1);
+    jumpscare.clampWhenFinished = true;
+    actions.current = { idle, jumpscare };
+    const returnToIdle = (event) => {
+      if (event.action !== jumpscare) return;
+      idle.reset().setEffectiveWeight(1).play();
+      jumpscare.crossFadeTo(idle, 0.35, false);
+    };
+    mixer.addEventListener('finished', returnToIdle);
+    return () => {
+      actions.current = null;
+      scare.current = null;
+      mixer.removeEventListener('finished', returnToIdle);
+      mixer.stopAllAction();
+      mixer.uncacheRoot(skeletonModel);
+    };
+  }, [skeletonModel, animations, mixer]);
+
+  const playJumpscare = (event) => {
+    event.stopPropagation();
+    if (!actions.current || sequence.current) return;
+    const position = character.current.position;
+    character.current.rotation.y = Math.atan2(camera.position.x - position.x, camera.position.z - position.z);
+    scare.current = { lookAt: new THREE.Vector3(position.x, position.y + 6, position.z) };
+    sequence.current = { elapsed: 0, started: false };
+  };
 
   return (
-    <group position={[-7.6, -1.8, -3.8]} rotation={[0, 0.65, 0]} scale={2.6}>
-      <Center bottom>
-        <primitive object={skeletonModel} />
-      </Center>
-      {/* Soporte vertical y peana de clínica */}
-      <Box args={[0.04, 4.6, 0.04]} position={[0, 2.2, -0.15]}>
-        <meshStandardMaterial color="#1d201e" metalness={0.8} roughness={0.3} />
-      </Box>
-      <Box args={[0.8, 0.05, 0.8]} position={[0, 0.02, -0.15]}>
-        <meshStandardMaterial color="#161817" metalness={0.7} roughness={0.4} />
-      </Box>
+    <group ref={character} position={[7.3, -3.97, 5.1]} rotation={[0, Math.PI * 0.25, 0]} scale={scale} onClick={playJumpscare}>
+      <group position={offset}>
+        <primitive object={skeletonModel} dispose={null} />
+      </group>
     </group>
   );
 };
@@ -557,7 +625,7 @@ const HospitalWallMaterial = ({ repeat = [5.5, 2.6], color = '#7c8b83' }) => {
   );
 };
 
-const Room = ({ isCamcorderActive = false }) => (
+const Room = ({ isCamcorderActive = false, scare }) => (
   <group>
     {/* Suelo: Baldosas clínicas institucionales de hospital manchadas y desgastadas */}
     <Plane args={[20, 14]} rotation={[-Math.PI / 2, 0, 0]} position={[0, -4, 1.2]} receiveShadow>
@@ -640,12 +708,11 @@ const Room = ({ isCamcorderActive = false }) => (
 
     {/* Elementos arquitectónicos y de atrezo de la oficina */}
     <AsylumDoor isCamcorderActive={isCamcorderActive} />
-    <FilingCabinet />
     <OfficeShelf />
     <InvestigationCorkboard isCamcorderActive={isCamcorderActive} />
     <AirDuctVent />
     <Suspense fallback={null}>
-      <AnatomicalSkeleton />
+      <AnatomicalSkeleton scare={scare} />
     </Suspense>
   </group>
 );
@@ -833,6 +900,15 @@ const Desk = () => {
   );
 };
 
+const MONITOR_SCREEN = {
+  position: [0, 0.02, 0.27],
+  width: 3.06,
+  height: 1.88,
+  pixelWidth: 1024,
+};
+// Html transform usa 40 px por unidad con distanceFactor=10.
+const MONITOR_SCREEN_SCALE = MONITOR_SCREEN.width * 40 / MONITOR_SCREEN.pixelWidth;
+
 const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onClose, onHover, onUnhover }) => {
   const [hovered, setHovered] = useState(false);
   useCursor(hovered && !isZooming && !isScreenActive && !isInMainMenu);
@@ -860,11 +936,6 @@ const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onC
         <meshStandardMaterial color="#020706" roughness={0.2} metalness={0.55} />
       </RoundedBox>
 
-      {/* Pantalla base oscura de fondo */}
-      <Plane args={[3.06, 1.88]} position={[0, 0.02, 0.27]}>
-        <meshBasicMaterial color="#00138c" />
-      </Plane>
-
       {/* LED de encendido del monitor */}
       <Box args={[0.16, 0.08, 0.04]} position={[1.48, -1.01, 0.27]}>
         <meshBasicMaterial color="#3585ff" />
@@ -873,11 +944,17 @@ const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onC
       {/* Luz ambiente emitida por la pantalla sobre el escritorio */}
       <pointLight position={[0, 0, 0.9]} intensity={1.8} distance={5} color="#2a68e8" />
 
+      {/* Vidrio, superficie de interacción y escritorio comparten el mismo centro local. */}
+      <group position={MONITOR_SCREEN.position}>
+      <Plane args={[MONITOR_SCREEN.width, MONITOR_SCREEN.height]}>
+        <meshBasicMaterial color="#00138c" />
+      </Plane>
+
       {/* Plano invisible 3D para capturar hover y click cuando no está en zoom sin interferir con Html */}
       {!isScreenActive && (
         <Plane
-          args={[3.1, 1.9]}
-          position={[0, 0.02, 0.286]}
+          args={[MONITOR_SCREEN.width, MONITOR_SCREEN.height]}
+          position={[0, 0, 0.016]}
           onClick={!isZooming ? onClick : null}
           onPointerOver={(e) => {
             e.stopPropagation();
@@ -895,17 +972,21 @@ const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onC
 
       {/* Pantalla Interactiva alojada físicamente en el monitor (oculta cuando el Menú Principal está activo) */}
       {!isInMainMenu && (
-        <group position={[0, -0.92, 0.282]}>
+        <group position={[0, 0, 0.012]}>
           <Html
             transform
             position={[0, 0, 0]}
-            scale={0.11953}
+            distanceFactor={10}
+            scale={MONITOR_SCREEN_SCALE}
             pointerEvents={isScreenActive ? 'auto' : 'none'}
             wrapperClass={`xp-screen-container ${isScreenActive ? 'pointer-events-auto' : 'pointer-events-none'}`}
             zIndexRange={[10, 0]}
           >
             <div
-              style={{ width: '1024px', height: '629px' }}
+              style={{
+                width: MONITOR_SCREEN.pixelWidth,
+                height: MONITOR_SCREEN.pixelWidth * MONITOR_SCREEN.height / MONITOR_SCREEN.width,
+              }}
               className={`rounded-sm overflow-hidden select-none shadow-2xl ${
                 isScreenActive ? 'pointer-events-auto' : 'pointer-events-none'
               }`}
@@ -919,6 +1000,7 @@ const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onC
           </Html>
         </group>
       )}
+      </group>
     </group>
   );
 };
@@ -1268,11 +1350,13 @@ const CameraController = ({
   onReachedTarget,
   isCamcorderActive,
   zoomLevel = 1.0,
-  baseYaw = 0
+  baseYaw = 0,
+  scare
 }) => {
   const { camera, clock } = useThree();
   const basePos = new THREE.Vector3(0, 3.5, 4);
   const currentYaw = useRef(0);
+  const scareCamera = useMemo(() => new THREE.PerspectiveCamera(), []);
 
   // Usar orden de Euler 'YXZ' para evitar bloqueos de cardán y rotar la cabeza limpiamente
   useEffect(() => {
@@ -1281,6 +1365,14 @@ const CameraController = ({
 
   useFrame((state) => {
     const time = clock.getElapsedTime();
+    if (scare.current) {
+      scareCamera.position.copy(camera.position);
+      scareCamera.lookAt(scare.current.lookAt);
+      camera.quaternion.slerp(scareCamera.quaternion, 0.18);
+      camera.fov = THREE.MathUtils.lerp(camera.fov, 55, 0.15);
+      camera.updateProjectionMatrix();
+      return;
+    }
 
     // Zoom óptico analógico dinámico: reduce el FOV para ampliar la vista como en Outlast
     const baseFov = 60;
@@ -1346,6 +1438,11 @@ const CameraController = ({
 // ---- Main Scene Component ----
 export default function DesktopScene() {
   const [isInMainMenu, setIsInMainMenu] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
+  const scare = useRef(null);
+  const markSceneReady = useCallback(() => setSceneReady(true), []);
+  const startGame = () => { setHasStarted(true); setIsInMainMenu(false); };
   const [animatingTo, setAnimatingTo] = useState('none');
   const [activeOverlay, setActiveOverlay] = useState('none');
   const [hoveredItem, setHoveredItem] = useState(null); // 'terminal' | 'document' | 'camcorder' | null
@@ -1397,6 +1494,7 @@ export default function DesktopScene() {
   };
 
   const handleTurn = (direction) => {
+    if (scare.current || !sceneReady) return;
     if (activeOverlay !== 'none') return;
     const now = Date.now();
     if (now - lastTurnTime.current < 280) return; // Cooldown para evitar giros involuntarios dobles
@@ -1407,6 +1505,7 @@ export default function DesktopScene() {
   };
 
   const handleOpen = (target) => {
+    if (scare.current || !sceneReady) return;
     setAnimatingTo(target);
   };
 
@@ -1462,6 +1561,7 @@ export default function DesktopScene() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (!sceneReady || scare.current) return;
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
       if (e.key === 'Escape') {
@@ -1474,6 +1574,10 @@ export default function DesktopScene() {
           setIsInMainMenu(true);
         }
       } else if (activeOverlay === 'none' && animatingTo !== 'terminal' && !isInMainMenu) {
+        if (e.key.toLowerCase() === 'f' && !isCamcorderActive) {
+          handleToggleCamcorder();
+          return;
+        }
         // Atajos de teclado para girar 90° libremente
         if (e.key === 'ArrowRight' || e.key === 'e' || e.key === 'E') {
           handleTurn('right');
@@ -1484,12 +1588,12 @@ export default function DesktopScene() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeOverlay, animatingTo, isCamcorderActive]);
+  }, [activeOverlay, animatingTo, isCamcorderActive, sceneReady, isInMainMenu]);
 
   return (
     <div className="w-screen h-screen relative bg-black overflow-hidden outlast-cursor">
       <div className={`w-full h-full ${isCamcorderActive ? 'outlast-nightvision-viewport' : ''}`}>
-        <Canvas camera={{ position: [0, 3.5, 4], fov: 60 }}>
+        {hasStarted && <Canvas dpr={[1, 1.5]} frameloop={isInMainMenu ? 'demand' : 'always'} camera={{ position: [0, 3.5, 4], fov: 60 }}>
           <color attach="background" args={['#020403']} />
           <fog attach="fog" args={['#020503', 2.0, isCamcorderActive ? 16 : 13]} />
 
@@ -1519,7 +1623,7 @@ export default function DesktopScene() {
           {/* Linterna Infrarroja (IR Spotlight) que ilumina hacia donde mira el jugador con zoom dinámico */}
           <CamcorderIRSpotlight active={isCamcorderActive} zoom={zoomLevel} />
 
-          <Room isCamcorderActive={isCamcorderActive} />
+          <Room isCamcorderActive={isCamcorderActive} scare={scare} />
           <Suspense fallback={null}>
             <Desk />
             <Monitor
@@ -1556,12 +1660,14 @@ export default function DesktopScene() {
             isCamcorderActive={isCamcorderActive}
             zoomLevel={zoomLevel}
             baseYaw={baseYaw}
+            scare={scare}
             onReachedTarget={(target) => {
               if (activeOverlay !== target) setActiveOverlay(target);
             }}
           />
 
-        </Canvas>
+          <SceneReady onReady={markSceneReady} />
+        </Canvas>}
       </div>
 
       {/* Indicadores visuales interactivos de giro de 90° (Solo la flecha, visibles siempre y en modo videocámara) */}
@@ -1667,25 +1773,14 @@ export default function DesktopScene() {
       {/* Menú de Inicio Auténtico de Outlast */}
       {isInMainMenu && (
         <OutlastMainMenu
-          onStartGame={() => setIsInMainMenu(false)}
+          onStartGame={startGame}
           onResetGame={() => {
             handleClose();
-            setIsInMainMenu(false);
           }}
         />
       )}
+      {hasStarted && !sceneReady && <SceneLoading />}
     </div>
   );
 }
 
-useGLTF.preload('/assets/models/keyboard.glb');
-useGLTF.preload('/assets/models/low_poly_outlast_camera.glb');
-useGLTF.preload('/assets/models/skeleton.glb');
-useTexture.preload('/assets/textures/wall/concrete_block_wall_diff_1k.jpg');
-useTexture.preload('/assets/textures/wall/concrete_block_wall_nor_1k.jpg');
-useTexture.preload('/assets/textures/wall/concrete_block_wall_rough_1k.jpg');
-useTexture.preload('/assets/textures/blood/bloodslash_heavy.png');
-useTexture.preload('/assets/textures/blood/bloodspray.png');
-useTexture.preload('/assets/textures/blood/bloodslash1.png');
-useTexture.preload('/assets/textures/blood/bloodsplat.png');
-useTexture.preload('/assets/textures/blood/bloodslash2.png');

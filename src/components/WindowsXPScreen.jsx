@@ -39,13 +39,22 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     { type: 'info', text: 'Escribe "ayuda" o "proyectos" para explorar expedientes clasificados.' },
   ]);
 
-  const terminalEndRef = useRef(null);
+  const terminalScrollRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const commandInputRef = useRef(null);
 
   useEffect(() => {
-    if (isLoggedIn && terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (isLoggedIn && terminalScrollRef.current) {
+      const terminal = terminalScrollRef.current;
+      terminal.scrollTo({ top: terminal.scrollHeight, behavior: 'smooth' });
     }
   }, [consoleLogs, isLoggedIn]);
+
+  useEffect(() => {
+    if (!isZoomedIn) return;
+    const input = isLoggedIn ? commandInputRef.current : passwordInputRef.current;
+    input?.focus({ preventScroll: true });
+  }, [isLoggedIn, isZoomedIn]);
 
   const handleLogin = (e) => {
     if (e) e.preventDefault();
@@ -78,7 +87,8 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     if (cleanCmd === 'ayuda' || cleanCmd === 'help') {
       newLogs.push(
         { type: 'info', text: 'COMANDOS DISPONIBLES EN TERMINAL MURKOFF:' },
-        { type: 'text', text: '  proyectos    - Ver expedientes de Caso Colchagua y análisis BI' },
+        { type: 'text', text: '  proyectos    - Abrir repositorios de RedKris0' },
+        { type: 'text', text: '  creditos     - Autores y licencias de los modelos 3D' },
         { type: 'text', text: '  habilidades  - Listar stack técnico y tecnologías' },
         { type: 'text', text: '  contacto     - Canales de comunicación directa' },
         { type: 'text', text: '  limpiar      - Limpiar el búfer de la consola' },
@@ -87,12 +97,11 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
       );
     } else if (cleanCmd === 'proyectos' || cleanCmd === 'projects') {
       newLogs.push(
-        { type: 'highlight', text: '=== EXPEDIENTE PRINCIPAL: CASO COLCHAGUA (PYMES) ===' },
-        { type: 'text', text: '• Diagnóstico y transformación analítica para toma de decisiones.' },
-        { type: 'text', text: '• Pipeline ETL en Python con ingesta y normalización en PostgreSQL.' },
-        { type: 'text', text: '• Modelo Estrella optimizado con medidas DAX avanzadas.' },
-        { type: 'text', text: '• Dashboard interactivo en Power BI con KPIs de liquidez y margen.' },
-        { type: 'ok', text: '[ESTADO: EXPEDIENTE CLASIFICADO Y VERIFICADO POR CRISTÓBAL ROJAS]' }
+        { type: 'highlight', text: '=== REPOSITORIOS DE REDKRIS0 ===' },
+        ...['portafolio-web', 'KrisMusicManager', 'Verpelis', 'Wishlist'].map(name => ({
+          type: 'link', text: name, href: `https://github.com/RedKris0/${name}`,
+        })),
+        { type: 'link', text: 'Ver todos los repositorios en GitHub', href: 'https://github.com/RedKris0?tab=repositories' }
       );
     } else if (cleanCmd === 'habilidades' || cleanCmd === 'skills') {
       newLogs.push(
@@ -106,10 +115,18 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     } else if (cleanCmd === 'contacto' || cleanCmd === 'contact') {
       newLogs.push(
         { type: 'highlight', text: '=== CANALES DE CONTACTO OFICIALES ===' },
-        { type: 'text', text: '• LinkedIn: https://www.linkedin.com' },
-        { type: 'text', text: '• GitHub: https://github.com/CrpProgamer' },
-        { type: 'text', text: '• Email: cristobal.rojas.perez@example.com' },
+        { type: 'link', text: 'GitHub: RedKris0', href: 'https://github.com/RedKris0' },
+        { type: 'link', text: 'Email: cristobalrp09@gmail.com', href: 'mailto:cristobalrp09@gmail.com' },
         { type: 'info', text: 'Disponible para contratación y proyectos de Business Intelligence.' }
+      );
+    } else if (cleanCmd === 'creditos' || cleanCmd === 'créditos') {
+      newLogs.push(
+        { type: 'highlight', text: '=== CRÉDITOS DE MODELOS 3D ===' },
+        { type: 'link', text: 'Black Death (rigged) — Veterock (escala ajustada; animaciones adaptadas al rig)', href: 'https://skfb.ly/oLUyv' },
+        { type: 'link', text: 'Licencia: Creative Commons Attribution 4.0', href: 'https://creativecommons.org/licenses/by/4.0/' },
+        { type: 'link', text: 'Springtrap Jumpscare — OrangeSauceu (movimiento adaptado a Black Death)', href: 'https://skfb.ly/6ZU6Y' },
+        { type: 'link', text: 'Licencia: Creative Commons Attribution 4.0', href: 'https://creativecommons.org/licenses/by/4.0/' },
+        { type: 'text', text: 'Old Man Idle — Mixamo (movimiento adaptado a Black Death)' },
       );
     } else if (cleanCmd === 'limpiar' || cleanCmd === 'clear') {
       setConsoleLogs([
@@ -286,7 +303,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                           }}
                           className="flex-1 px-3 py-1.5 bg-white text-black font-sans text-sm rounded-xs border-2 border-blue-400 focus:outline-none focus:ring-2 focus:ring-[#ff9015] shadow-inner tracking-widest font-bold"
                           placeholder="••••••••"
-                          autoFocus={isZoomedIn}
+                          ref={passwordInputRef}
                         />
                         {/* Botón verde de flecha clásico de Windows XP */}
                         <button
@@ -426,9 +443,18 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
             </div>
 
             {/* Cuerpo de la Consola: Fondo negro, texto blanco y scrollbar idéntica a la referencia */}
-            <div className="flex-1 bg-black text-white p-4 overflow-y-auto font-mono text-xs leading-relaxed flex flex-col justify-between">
+            <div ref={terminalScrollRef} className="flex-1 min-h-0 bg-black text-white p-4 overflow-y-auto overscroll-contain font-mono text-xs leading-relaxed flex flex-col justify-between">
               <div className="space-y-1.5">
                 {consoleLogs.map((log, idx) => {
+                  if (log.type === 'link') {
+                    return (
+                      <div key={idx}>
+                        <a href={log.href} target="_blank" rel="noopener noreferrer" className="text-sky-300 underline underline-offset-2 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-300">
+                          {log.text} ↗
+                        </a>
+                      </div>
+                    );
+                  }
                   if (log.type === 'header') {
                     return (
                       <div key={idx} className="font-bold text-white text-sm tracking-wide">
@@ -491,7 +517,6 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                     </div>
                   );
                 })}
-                <div ref={terminalEndRef} />
               </div>
 
               {/* Entrada interactiva de comandos con cursor parpadeante */}
@@ -505,7 +530,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                     onKeyDown={(e) => playKeySound(e.key)}
                     placeholder="Escribe un comando (ej: proyectos, ayuda)..."
                     className="flex-1 bg-transparent text-white font-mono text-xs focus:outline-none placeholder:text-white/40"
-                    autoFocus
+                    ref={commandInputRef}
                   />
                   <button
                     type="submit"
@@ -518,7 +543,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                 {/* Accesos rápidos de un clic para comodidad del usuario */}
                 <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-white/10 text-[10px]">
                   <span className="text-white/40 self-center">ACCESOS RÁPIDOS:</span>
-                  {['proyectos', 'habilidades', 'contacto', 'check', 'limpiar'].map((cmd) => (
+                  {['proyectos', 'habilidades', 'contacto', 'creditos', 'check', 'limpiar'].map((cmd) => (
                     <button
                       key={cmd}
                       onClick={() => executeCommand(cmd)}
