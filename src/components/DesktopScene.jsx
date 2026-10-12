@@ -11,7 +11,7 @@ import InvestigationFiles from './InvestigationFiles.jsx';
 import OutlastCamcorderOverlay from './OutlastCamcorderOverlay.jsx';
 import OutlastDocumentOverlay from './OutlastDocumentOverlay.jsx';
 import OutlastMainMenu from './OutlastMainMenu.jsx';
-import WindowsXPScreen from './WindowsXPScreen.jsx';
+import WindowsXPScreen, { TERMINAL_PASSWORD } from './WindowsXPScreen.jsx';
 
 // ---- 3D Models & Enclosed Asylum Office ----
 const AsylumDoor = ({ isCamcorderActive = false }) => (
@@ -55,11 +55,9 @@ const AsylumDoor = ({ isCamcorderActive = false }) => (
     <Plane args={[2.0, 0.36]} position={[0, 2.85, 0.12]}>
       <meshStandardMaterial color="#0c0e0c" roughness={0.5} />
     </Plane>
-    {isCamcorderActive && (
-      <Text position={[0, 2.85, 0.13]} fontSize={0.13} color="#e6dec8">
-        PABELLÓN D // CONSULTA 04
-      </Text>
-    )}
+    <Text scale={isCamcorderActive ? 1 : 0} position={[0, 2.85, 0.13]} fontSize={0.13} color="#e6dec8">
+      PABELLÓN D // CONSULTA 04
+    </Text>
     {/* Haz frío de luz que se filtra por debajo y por la mirilla desde el pasillo exterior del pabellón */}
     <pointLight position={[0, -3.5, 0.4]} intensity={4.5} distance={4.2} color="#1d4d3d" />
     <pointLight position={[0, 1.55, 0.3]} intensity={2.4} distance={2.8} color="#5e1212" />
@@ -96,120 +94,119 @@ const AsylumExitSign = ({ position = [6.2, 1.95, -5.12] }) => {
 };
 
 const BloodWallWritings = ({ isCamcorderActive = false }) => {
-  if (!isCamcorderActive) return null;
   return (
-    <group>
+    <group scale={isCamcorderActive ? 1 : 0}>
       {/* Mensaje principal sangriento en la pared frontal sobre los bloques de hormigón (Referencia Foto 1) */}
       <group position={[-1.2, 3.2, -5.14]}>
-      {/* Palabra principal chorreante en sangre oscura */}
-      <Text
-        font="/assets/fonts/Nosifer.ttf"
-        fontSize={0.68}
-        color="#540404"
-        letterSpacing={0.12}
-        anchorX="center"
-        anchorY="middle"
-      >
-        OBSERVA
-      </Text>
-
-      {/* Segunda línea ensangrentada y tachada estilo paciente psiquiátrico (Foto 1) */}
-      <Text
-        position={[0, -0.72, 0]}
-        font="/assets/fonts/Creepster.ttf"
-        fontSize={0.44}
-        color="#480303"
-        letterSpacing={0.08}
-        anchorX="center"
-        anchorY="middle"
-      >
-        LA VERDAD
-      </Text>
-
-      {/* Inscripciones frenéticas repetidas en sangre alrededor de las letras principales (Foto 1) */}
-      {[
-        [-2.3, 0.65, 0.17, -0.06, 'OBSERVA'],
-        [2.1, 0.58, 0.16, 0.05, 'OBSERVA'],
-        [-2.6, -0.45, 0.15, 0.08, 'NO HAY SALIDA'],
-        [2.3, -0.52, 0.16, -0.07, 'CASO COLCHAGUA'],
-        [-1.8, 1.05, 0.14, 0.04, 'DATAMART'],
-        [1.6, 1.02, 0.15, -0.05, 'OBSERVAN'],
-        [-0.8, -1.25, 0.16, 0.02, 'OBSERVA'],
-        [1.1, -1.22, 0.15, -0.03, 'LA VERDAD'],
-        [-3.2, 0.15, 0.14, -0.09, 'TERAPIA'],
-        [3.0, 0.12, 0.14, 0.06, 'OBSERVA']
-      ].map(([x, y, size, rot, text], i) => (
+        {/* Palabra principal chorreante en sangre oscura */}
         <Text
-          key={i}
-          position={[x, y, 0.002]}
-          rotation={[0, 0, rot]}
-          font="/assets/fonts/RockSalt.ttf"
-          fontSize={size}
-          color="#380303"
-          letterSpacing={0.06}
+          font="/assets/fonts/Nosifer.ttf"
+          fontSize={0.68}
+          color="#540404"
+          letterSpacing={0.12}
           anchorX="center"
           anchorY="middle"
         >
-          {text}
+          OBSERVA
         </Text>
-      ))}
 
-      {/* Chorretones verticales gruesos de sangre que bajan por las juntas del hormigón hacia el piso (Foto 1) */}
-      {[-2.2, -1.7, -1.2, -0.8, -0.2, 0.4, 0.9, 1.5, 2.1].map((x, i) => (
-        <Box
-          key={i}
-          args={[0.024 + (i % 3) * 0.012, 1.2 + (i % 4) * 0.45, 0.006]}
-          position={[x, -1.1 - (i % 3) * 0.25, 0.005]}
+        {/* Segunda línea ensangrentada y tachada estilo paciente psiquiátrico (Foto 1) */}
+        <Text
+          position={[0, -0.72, 0]}
+          font="/assets/fonts/Creepster.ttf"
+          fontSize={0.44}
+          color="#480303"
+          letterSpacing={0.08}
+          anchorX="center"
+          anchorY="middle"
         >
-          <meshStandardMaterial color="#2d0202" roughness={0.65} opacity={0.92} transparent />
-        </Box>
-      ))}
-    </group>
+          LA VERDAD
+        </Text>
 
-    {/* Inscripciones en la pared lateral izquierda junto al conducto de ventilación */}
-    <group position={[-9.43, 0.8, -2.8]} rotation={[0, Math.PI / 2, 0]}>
-      <Text
-        font="/assets/fonts/Nosifer.ttf"
-        fontSize={0.34}
-        color="#420404"
-        letterSpacing={0.05}
-        anchorX="center"
-        anchorY="middle"
-      >
-        NO HAY SALIDA
-      </Text>
-      <Text
-        position={[0, -0.55, 0]}
-        font="/assets/fonts/Creepster.ttf"
-        fontSize={0.24}
-        color="#380303"
-        letterSpacing={0.08}
-        anchorX="center"
-        anchorY="middle"
-      >
-        PURIFICACION POR DATOS
-      </Text>
-      {[-1.2, -0.6, 0.4, 1.0].map((x, i) => (
-        <Box key={i} args={[0.02, 0.55 + (i % 3) * 0.2, 0.005]} position={[x, -0.35, 0.005]}>
-          <meshStandardMaterial color="#2d0202" roughness={0.7} opacity={0.82} transparent />
-        </Box>
-      ))}
-    </group>
+        {/* Inscripciones frenéticas repetidas en sangre alrededor de las letras principales (Foto 1) */}
+        {[
+          [-2.3, 0.65, 0.17, -0.06, 'OBSERVA'],
+          [2.1, 0.58, 0.16, 0.05, 'OBSERVA'],
+          [-2.6, -0.45, 0.15, 0.08, 'NO HAY SALIDA'],
+          [2.3, -0.52, 0.16, -0.07, 'CASO COLCHAGUA'],
+          [-1.8, 1.05, 0.14, 0.04, 'DATAMART'],
+          [1.6, 1.02, 0.15, -0.05, 'OBSERVAN'],
+          [-0.8, -1.25, 0.16, 0.02, 'OBSERVA'],
+          [1.1, -1.22, 0.15, -0.03, 'LA VERDAD'],
+          [-3.2, 0.15, 0.14, -0.09, 'TERAPIA'],
+          [3.0, 0.12, 0.14, 0.06, 'OBSERVA']
+        ].map(([x, y, size, rot, text], i) => (
+          <Text
+            key={i}
+            position={[x, y, 0.002]}
+            rotation={[0, 0, rot]}
+            font="/assets/fonts/RockSalt.ttf"
+            fontSize={size}
+            color="#380303"
+            letterSpacing={0.06}
+            anchorX="center"
+            anchorY="middle"
+          >
+            {text}
+          </Text>
+        ))}
 
-    {/* Inscripción conspirativa de Murkoff cerca del archivador */}
-    <group position={[4.6, -1.8, -5.14]} rotation={[0, 0, -0.04]}>
-      <Text
-        font="/assets/fonts/RockSalt.ttf"
-        fontSize={0.19}
-        color="#3e0505"
-        letterSpacing={0.04}
-        anchorX="center"
-        anchorY="middle"
-      >
-        MURKOFF MIENTE // TERAPIA COGNITIVA
-      </Text>
+        {/* Chorretones verticales gruesos de sangre que bajan por las juntas del hormigón hacia el piso (Foto 1) */}
+        {[-2.2, -1.7, -1.2, -0.8, -0.2, 0.4, 0.9, 1.5, 2.1].map((x, i) => (
+          <Box
+            key={i}
+            args={[0.024 + (i % 3) * 0.012, 1.2 + (i % 4) * 0.45, 0.006]}
+            position={[x, -1.1 - (i % 3) * 0.25, 0.005]}
+          >
+            <meshStandardMaterial color="#2d0202" roughness={0.65} opacity={0.92} transparent />
+          </Box>
+        ))}
+      </group>
+
+      {/* Inscripciones en la pared lateral izquierda junto al conducto de ventilación */}
+      <group position={[-9.43, 0.8, -2.8]} rotation={[0, Math.PI / 2, 0]}>
+        <Text
+          font="/assets/fonts/Nosifer.ttf"
+          fontSize={0.34}
+          color="#420404"
+          letterSpacing={0.05}
+          anchorX="center"
+          anchorY="middle"
+        >
+          NO HAY SALIDA
+        </Text>
+        <Text
+          position={[0, -0.55, 0]}
+          font="/assets/fonts/Creepster.ttf"
+          fontSize={0.24}
+          color="#380303"
+          letterSpacing={0.08}
+          anchorX="center"
+          anchorY="middle"
+        >
+          PURIFICACION POR DATOS
+        </Text>
+        {[-1.2, -0.6, 0.4, 1.0].map((x, i) => (
+          <Box key={i} args={[0.02, 0.55 + (i % 3) * 0.2, 0.005]} position={[x, -0.35, 0.005]}>
+            <meshStandardMaterial color="#2d0202" roughness={0.7} opacity={0.82} transparent />
+          </Box>
+        ))}
+      </group>
+
+      {/* Inscripción conspirativa de Murkoff cerca del archivador */}
+      <group position={[4.6, -1.8, -5.14]} rotation={[0, 0, -0.04]}>
+        <Text
+          font="/assets/fonts/RockSalt.ttf"
+          fontSize={0.19}
+          color="#3e0505"
+          letterSpacing={0.04}
+          anchorX="center"
+          anchorY="middle"
+        >
+          MURKOFF MIENTE // TERAPIA COGNITIVA
+        </Text>
+      </group>
     </group>
-  </group>
   );
 };
 
@@ -376,42 +373,40 @@ const InvestigationCorkboard = ({ isCamcorderActive = false }) => (
     </Box>
 
     {/* Credenciales de acceso escritas en la pared debajo del tablero con fuente Humble Wall */}
-    {isCamcorderActive && (
-      <group position={[0, -1.45, 0.015]} rotation={[0, 0, -0.025]}>
-        <Text
-          font="/assets/fonts/HumbleWall.ttf"
-          fontSize={0.28}
-          color="#4e0505"
-          letterSpacing={0.06}
-          anchorX="center"
-          anchorY="middle"
-        >
-          USUARIO: crojas
-        </Text>
-        <Text
-          position={[0, -0.34, 0]}
-          font="/assets/fonts/HumbleWall.ttf"
-          fontSize={0.28}
-          color="#4e0505"
-          letterSpacing={0.06}
-          anchorX="center"
-          anchorY="middle"
-        >
-          PASSWORD: murkoff
-        </Text>
+    <group scale={isCamcorderActive ? 1 : 0} position={[0, -1.45, 0.015]} rotation={[0, 0, -0.025]}>
+      <Text
+        font="/assets/fonts/HumbleWall.ttf"
+        fontSize={0.28}
+        color="#4e0505"
+        letterSpacing={0.06}
+        anchorX="center"
+        anchorY="middle"
+      >
+        USUARIO: crojas
+      </Text>
+      <Text
+        position={[0, -0.34, 0]}
+        font="/assets/fonts/HumbleWall.ttf"
+        fontSize={0.28}
+        color="#4e0505"
+        letterSpacing={0.06}
+        anchorX="center"
+        anchorY="middle"
+      >
+        {`PASSWORD: ${TERMINAL_PASSWORD}`}
+      </Text>
 
-        {/* Chorretones de sangre seca debajo de las credenciales */}
-        {[-0.65, -0.15, 0.45].map((dx, i) => (
-          <Box
-            key={i}
-            args={[0.02, 0.28 + i * 0.08, 0.003]}
-            position={[dx, -0.56 - i * 0.04, 0.002]}
-          >
-            <meshStandardMaterial color="#350303" roughness={0.7} opacity={0.9} transparent />
-          </Box>
-        ))}
-      </group>
-    )}
+      {/* Chorretones de sangre seca debajo de las credenciales */}
+      {[-0.65, -0.15, 0.45].map((dx, i) => (
+        <Box
+          key={i}
+          args={[0.02, 0.28 + i * 0.08, 0.003]}
+          position={[dx, -0.56 - i * 0.04, 0.002]}
+        >
+          <meshStandardMaterial color="#350303" roughness={0.7} opacity={0.9} transparent />
+        </Box>
+      ))}
+    </group>
   </group>
 );
 
@@ -434,17 +429,13 @@ const AirDuctVent = () => (
   </group>
 );
 
-const AnatomicalSkeleton = ({ scare }) => {
+const AnatomicalSkeleton = () => {
   const { scene } = useGLTF('/assets/models/black_death_rigged.glb', true, true, registerCharacterMaterials);
-  const character = useRef();
-  const sequence = useRef(null);
-  const { camera } = useThree();
   const animationData = useLoader(THREE.FileLoader, '/assets/animations/black-death.json');
   const animations = useMemo(
     () => JSON.parse(animationData).map((clip) => THREE.AnimationClip.parse(clip)),
     [animationData],
   );
-  const actions = useRef(null);
   const { skeletonModel, scale, offset } = useMemo(() => {
     const model = cloneSkeleton(scene);
     prepareCharacterRig(model);
@@ -459,69 +450,26 @@ const AnatomicalSkeleton = ({ scare }) => {
   }, [scene]);
   const mixer = useMemo(() => new THREE.AnimationMixer(skeletonModel), [skeletonModel]);
 
-  useFrame((_, delta) => {
-    const current = sequence.current;
-    if (current) {
-      current.elapsed += delta;
-      if (!current.started && current.elapsed >= 0.45) {
-        current.started = true;
-        const { idle, jumpscare } = actions.current;
-        jumpscare.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).play();
-        idle.crossFadeTo(jumpscare, 0.12, false);
-      }
-      if (current.elapsed > 2.2) {
-        character.current.rotation.y = Math.PI * 0.25;
-        sequence.current = null;
-        scare.current = null;
-      }
-    }
-    mixer.update(Math.min(delta, 0.1));
-    if (scare.current) {
-      skeletonModel.updateWorldMatrix(true, true);
-      skeletonModel.getObjectByName('Head_06')?.getWorldPosition(scare.current.lookAt);
-    }
-  });
+  useFrame((_, delta) => mixer.update(Math.min(delta, 0.1)));
 
   useEffect(() => {
     skeletonModel.traverse((object) => {
       if (!object.isMesh) return;
       object.castShadow = true;
       object.receiveShadow = true;
-      // Rest-pose bounds do not cover the jumpscare's moving limbs.
       object.frustumCulled = false;
     });
-    const idle = mixer.clipAction(animations.find(clip => clip.name === 'Old Man Idle'));
-    const jumpscare = mixer.clipAction(animations.find(clip => clip.name === 'Springtrap Jumpscare'));
-    idle.setLoop(THREE.LoopRepeat, Infinity).play();
-    jumpscare.setLoop(THREE.LoopOnce, 1);
-    jumpscare.clampWhenFinished = true;
-    actions.current = { idle, jumpscare };
-    const returnToIdle = (event) => {
-      if (event.action !== jumpscare) return;
-      idle.reset().setEffectiveWeight(1).play();
-      jumpscare.crossFadeTo(idle, 0.35, false);
-    };
-    mixer.addEventListener('finished', returnToIdle);
+    mixer.clipAction(animations.find((clip) => clip.name === 'Old Man Idle'))
+      .setLoop(THREE.LoopRepeat, Infinity)
+      .play();
     return () => {
-      actions.current = null;
-      scare.current = null;
-      mixer.removeEventListener('finished', returnToIdle);
       mixer.stopAllAction();
       mixer.uncacheRoot(skeletonModel);
     };
   }, [skeletonModel, animations, mixer]);
 
-  const playJumpscare = (event) => {
-    event.stopPropagation();
-    if (!actions.current || sequence.current) return;
-    const position = character.current.position;
-    character.current.rotation.y = Math.atan2(camera.position.x - position.x, camera.position.z - position.z);
-    scare.current = { lookAt: new THREE.Vector3(position.x, position.y + 6, position.z) };
-    sequence.current = { elapsed: 0, started: false };
-  };
-
   return (
-    <group ref={character} position={[7.3, -3.97, 5.1]} rotation={[0, Math.PI * 0.25, 0]} scale={scale} onClick={playJumpscare}>
+    <group position={[-7.6, -3.97, -3.8]} rotation={[0, Math.PI * 0.25, 0]} scale={scale}>
       <group position={offset}>
         <primitive object={skeletonModel} dispose={null} />
       </group>
@@ -625,7 +573,7 @@ const HospitalWallMaterial = ({ repeat = [5.5, 2.6], color = '#7c8b83' }) => {
   );
 };
 
-const Room = ({ isCamcorderActive = false, scare }) => (
+const Room = ({ isCamcorderActive = false }) => (
   <group>
     {/* Suelo: Baldosas clínicas institucionales de hospital manchadas y desgastadas */}
     <Plane args={[20, 14]} rotation={[-Math.PI / 2, 0, 0]} position={[0, -4, 1.2]} receiveShadow>
@@ -712,7 +660,7 @@ const Room = ({ isCamcorderActive = false, scare }) => (
     <InvestigationCorkboard isCamcorderActive={isCamcorderActive} />
     <AirDuctVent />
     <Suspense fallback={null}>
-      <AnatomicalSkeleton scare={scare} />
+      <AnatomicalSkeleton />
     </Suspense>
   </group>
 );
@@ -909,7 +857,7 @@ const MONITOR_SCREEN = {
 // Html transform usa 40 px por unidad con distanceFactor=10.
 const MONITOR_SCREEN_SCALE = MONITOR_SCREEN.width * 40 / MONITOR_SCREEN.pixelWidth;
 
-const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onClose, onHover, onUnhover }) => {
+const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onClose, onLoginFailure, onHover, onUnhover }) => {
   const [hovered, setHovered] = useState(false);
   useCursor(hovered && !isZooming && !isScreenActive && !isInMainMenu);
 
@@ -946,60 +894,60 @@ const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onC
 
       {/* Vidrio, superficie de interacción y escritorio comparten el mismo centro local. */}
       <group position={MONITOR_SCREEN.position}>
-      <Plane args={[MONITOR_SCREEN.width, MONITOR_SCREEN.height]}>
-        <meshBasicMaterial color="#00138c" />
-      </Plane>
-
-      {/* Plano invisible 3D para capturar hover y click cuando no está en zoom sin interferir con Html */}
-      {!isScreenActive && (
-        <Plane
-          args={[MONITOR_SCREEN.width, MONITOR_SCREEN.height]}
-          position={[0, 0, 0.016]}
-          onClick={!isZooming ? onClick : null}
-          onPointerOver={(e) => {
-            e.stopPropagation();
-            setHovered(true);
-            if (onHover && !isZooming) onHover('terminal');
-          }}
-          onPointerOut={() => {
-            setHovered(false);
-            if (onUnhover) onUnhover();
-          }}
-        >
-          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+        <Plane args={[MONITOR_SCREEN.width, MONITOR_SCREEN.height]}>
+          <meshBasicMaterial color="#00138c" />
         </Plane>
-      )}
 
-      {/* Pantalla Interactiva alojada físicamente en el monitor (oculta cuando el Menú Principal está activo) */}
-      {!isInMainMenu && (
-        <group position={[0, 0, 0.012]}>
-          <Html
-            transform
-            position={[0, 0, 0]}
-            distanceFactor={10}
-            scale={MONITOR_SCREEN_SCALE}
-            pointerEvents={isScreenActive ? 'auto' : 'none'}
-            wrapperClass={`xp-screen-container ${isScreenActive ? 'pointer-events-auto' : 'pointer-events-none'}`}
-            zIndexRange={[10, 0]}
+        {/* Plano invisible 3D para capturar hover y click cuando no está en zoom sin interferir con Html */}
+        {!isScreenActive && (
+          <Plane
+            args={[MONITOR_SCREEN.width, MONITOR_SCREEN.height]}
+            position={[0, 0, 0.016]}
+            onClick={!isZooming ? onClick : null}
+            onPointerOver={(e) => {
+              e.stopPropagation();
+              setHovered(true);
+              if (onHover && !isZooming) onHover('terminal');
+            }}
+            onPointerOut={() => {
+              setHovered(false);
+              if (onUnhover) onUnhover();
+            }}
           >
-            <div
-              style={{
-                width: MONITOR_SCREEN.pixelWidth,
-                height: MONITOR_SCREEN.pixelWidth * MONITOR_SCREEN.height / MONITOR_SCREEN.width,
-              }}
-              className={`rounded-sm overflow-hidden select-none shadow-2xl ${
-                isScreenActive ? 'pointer-events-auto' : 'pointer-events-none'
-              }`}
+            <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+          </Plane>
+        )}
+
+        {/* Pantalla Interactiva alojada físicamente en el monitor (oculta cuando el Menú Principal está activo) */}
+        {!isInMainMenu && (
+          <group position={[0, 0, 0.012]}>
+            <Html
+              transform
+              position={[0, 0, 0]}
+              distanceFactor={10}
+              scale={MONITOR_SCREEN_SCALE}
+              pointerEvents={isScreenActive ? 'auto' : 'none'}
+              wrapperClass={`xp-screen-container ${isScreenActive ? 'pointer-events-auto' : 'pointer-events-none'}`}
+              zIndexRange={[10, 0]}
             >
-              <WindowsXPScreen
-                isZoomedIn={isScreenActive}
-                onZoomIn={onClick}
-                onClose={onClose}
-              />
-            </div>
-          </Html>
-        </group>
-      )}
+              <div
+                style={{
+                  width: MONITOR_SCREEN.pixelWidth,
+                  height: MONITOR_SCREEN.pixelWidth * MONITOR_SCREEN.height / MONITOR_SCREEN.width,
+                }}
+                className={`rounded-sm overflow-hidden select-none shadow-2xl ${isScreenActive ? 'pointer-events-auto' : 'pointer-events-none'
+                  }`}
+              >
+                <WindowsXPScreen
+                  isZoomedIn={isScreenActive}
+                  onZoomIn={onClick}
+                  onClose={onClose}
+                  onLoginFailure={onLoginFailure}
+                />
+              </div>
+            </Html>
+          </group>
+        )}
       </group>
     </group>
   );
@@ -1350,13 +1298,11 @@ const CameraController = ({
   onReachedTarget,
   isCamcorderActive,
   zoomLevel = 1.0,
-  baseYaw = 0,
-  scare
+  baseYaw = 0
 }) => {
   const { camera, clock } = useThree();
   const basePos = new THREE.Vector3(0, 3.5, 4);
   const currentYaw = useRef(0);
-  const scareCamera = useMemo(() => new THREE.PerspectiveCamera(), []);
 
   // Usar orden de Euler 'YXZ' para evitar bloqueos de cardán y rotar la cabeza limpiamente
   useEffect(() => {
@@ -1365,14 +1311,6 @@ const CameraController = ({
 
   useFrame((state) => {
     const time = clock.getElapsedTime();
-    if (scare.current) {
-      scareCamera.position.copy(camera.position);
-      scareCamera.lookAt(scare.current.lookAt);
-      camera.quaternion.slerp(scareCamera.quaternion, 0.18);
-      camera.fov = THREE.MathUtils.lerp(camera.fov, 55, 0.15);
-      camera.updateProjectionMatrix();
-      return;
-    }
 
     // Zoom óptico analógico dinámico: reduce el FOV para ampliar la vista como en Outlast
     const baseFov = 60;
@@ -1429,6 +1367,20 @@ const CameraController = ({
 
       if (camera.position.distanceTo(monPos) < 0.08) onReachedTarget('terminal');
     }
+    else if (target === 'scare' || target === 'scareHold') {
+      const scarePos = new THREE.Vector3(0, 3.5, 4);
+      const scareTarget = new THREE.Vector3(-7.6, 0.3, -3.8);
+      const targetRotation = new THREE.Quaternion().setFromRotationMatrix(
+        new THREE.Matrix4().lookAt(camera.position, scareTarget, camera.up),
+      );
+
+      camera.position.lerp(scarePos, 0.04);
+      camera.quaternion.slerp(targetRotation, 0.025);
+
+      if (target === 'scare' && camera.position.distanceTo(scarePos) < 0.12 && camera.quaternion.angleTo(targetRotation) < 0.04) {
+        onReachedTarget('scare');
+      }
+    }
   });
 
   return null;
@@ -1438,20 +1390,75 @@ const CameraController = ({
 // ---- Main Scene Component ----
 export default function DesktopScene() {
   const [isInMainMenu, setIsInMainMenu] = useState(true);
-  const [hasStarted, setHasStarted] = useState(false);
   const [sceneReady, setSceneReady] = useState(false);
-  const scare = useRef(null);
-  const markSceneReady = useCallback(() => setSceneReady(true), []);
-  const startGame = () => { setHasStarted(true); setIsInMainMenu(false); };
+  const [isCamcorderPrewarming, setIsCamcorderPrewarming] = useState(true);
+  const [isJumpscarePlaying, setIsJumpscarePlaying] = useState(false);
+  const [isJumpscareReady, setIsJumpscareReady] = useState(false);
+  const [isTransitionBlack, setIsTransitionBlack] = useState(false);
+  const jumpscareRef = useRef(null);
+  const transitionTimerRef = useRef(null);
+  const scareDelayRef = useRef(null);
+  const isTransitioningRef = useRef(false);
+  const isScareSequenceRef = useRef(false);
+  const startGame = () => setIsInMainMenu(false);
   const [animatingTo, setAnimatingTo] = useState('none');
   const [activeOverlay, setActiveOverlay] = useState('none');
   const [hoveredItem, setHoveredItem] = useState(null); // 'terminal' | 'document' | 'camcorder' | null
   const [isCamcorderActive, setIsCamcorderActive] = useState(false);
+  const isCamcorderVisualActive = isCamcorderActive;
   const [isCameraOnDesk, setIsCameraOnDesk] = useState(true);
   const [sensorFlash, setSensorFlash] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1.0);
   const [baseYaw, setBaseYaw] = useState(0); // Ángulo base de rotación en pasos de 90°
   const lastTurnTime = useRef(0);
+
+  const runBlackTransition = useCallback((action) => {
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+    setIsTransitionBlack(true);
+    transitionTimerRef.current = setTimeout(() => {
+      action();
+      requestAnimationFrame(() => setIsTransitionBlack(false));
+      isTransitioningRef.current = false;
+    }, 500);
+  }, []);
+
+  useEffect(() => () => {
+    clearTimeout(transitionTimerRef.current);
+    clearTimeout(scareDelayRef.current);
+  }, []);
+
+  const setCamcorderState = useCallback((active, silent = false) => {
+    if (active) {
+      if (!silent) playSound('camera_pickup', 0.95);
+      setIsCameraOnDesk(false);
+      setHoveredItem(null);
+      setSensorFlash(true);
+      setTimeout(() => setSensorFlash(false), 60);
+      setIsCamcorderActive(true);
+      setZoomLevel(1.0);
+    } else {
+      if (!silent) playSound('nightvision_off', 0.85);
+      setIsCamcorderActive(false);
+      setIsCameraOnDesk(true);
+      setHoveredItem(null);
+      setZoomLevel(1.0);
+    }
+  }, []);
+
+  const markSceneReady = useCallback(() => {
+    setCamcorderState(true, true);
+    let frames = 0;
+    const finishPrewarm = () => {
+      if (++frames < 8) return requestAnimationFrame(finishPrewarm);
+      setCamcorderState(false, true);
+      requestAnimationFrame(() => {
+        setIsCamcorderPrewarming(false);
+        requestAnimationFrame(() => setSceneReady(true));
+      });
+    };
+    requestAnimationFrame(finishPrewarm);
+  }, [setCamcorderState]);
 
   // Sonido ambiental tétrico y pesado de Outlast en bucle continuo
   const ambientAudioRef = useRef(null);
@@ -1464,7 +1471,7 @@ export default function DesktopScene() {
 
     const startAmbience = () => {
       if (ambientAudioRef.current) {
-        ambientAudioRef.current.play().catch(() => {});
+        ambientAudioRef.current.play().catch(() => { });
       }
     };
 
@@ -1494,7 +1501,7 @@ export default function DesktopScene() {
   };
 
   const handleTurn = (direction) => {
-    if (scare.current || !sceneReady) return;
+    if (!sceneReady) return;
     if (activeOverlay !== 'none') return;
     const now = Date.now();
     if (now - lastTurnTime.current < 280) return; // Cooldown para evitar giros involuntarios dobles
@@ -1505,39 +1512,53 @@ export default function DesktopScene() {
   };
 
   const handleOpen = (target) => {
-    if (scare.current || !sceneReady) return;
+    if (!sceneReady) return;
     setAnimatingTo(target);
   };
 
   const handleClose = () => {
-    setActiveOverlay('none');
-    setAnimatingTo('none');
+    const closeView = () => {
+      setActiveOverlay('none');
+      setAnimatingTo('none');
+    };
+
+    if (activeOverlay === 'terminal' || animatingTo === 'terminal') runBlackTransition(closeView);
+    else closeView();
+  };
+
+  const playJumpscare = () => {
+    if (isScareSequenceRef.current) return;
+    isScareSequenceRef.current = true;
+    scareDelayRef.current = setTimeout(() => {
+      runBlackTransition(() => {
+        setActiveOverlay('none');
+        setAnimatingTo('scare');
+      });
+    }, 1000);
+  };
+
+  const finishScareTurn = () => {
+    setAnimatingTo('scareHold');
+    scareDelayRef.current = setTimeout(() => {
+      runBlackTransition(() => {
+        setAnimatingTo('none');
+        const video = jumpscareRef.current;
+        if (!video) {
+          isScareSequenceRef.current = false;
+          return;
+        }
+        video.currentTime = 0;
+        setIsJumpscarePlaying(true);
+        video.play().catch(() => {
+          setIsJumpscarePlaying(false);
+          isScareSequenceRef.current = false;
+        });
+      });
+    }, 900);
   };
 
   const handleToggleCamcorder = () => {
-    if (!isCamcorderActive) {
-      // Reproducir sonido de agarrar la cámara de inmediato sin latencia
-      playSound('camera_pickup', 0.95);
-
-      // La cámara desaparece de la mesa y se limpia cualquier hover
-      setIsCameraOnDesk(false);
-      setHoveredItem(null);
-
-      // Micro-destello sutil de apertura de sensor infrarrojo fosforescente (60ms)
-      setSensorFlash(true);
-      setTimeout(() => setSensorFlash(false), 60);
-
-      // Activar visión nocturna y visor inmediatamente
-      setIsCamcorderActive(true);
-      setZoomLevel(1.0);
-    } else {
-      // Bajar la videocámara de inmediato
-      playSound('nightvision_off', 0.85);
-      setIsCamcorderActive(false);
-      setIsCameraOnDesk(true);
-      setHoveredItem(null);
-      setZoomLevel(1.0);
-    }
+    runBlackTransition(() => setCamcorderState(!isCamcorderActive));
   };
 
   // Zoom interactivo con la rueda del ratón (Scroll) mientras la videocámara está levantada
@@ -1561,7 +1582,7 @@ export default function DesktopScene() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (!sceneReady || scare.current) return;
+      if (!sceneReady) return;
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
       if (e.key === 'Escape') {
@@ -1592,38 +1613,38 @@ export default function DesktopScene() {
 
   return (
     <div className="w-screen h-screen relative bg-black overflow-hidden outlast-cursor">
-      <div className={`w-full h-full ${isCamcorderActive ? 'outlast-nightvision-viewport' : ''}`}>
-        {hasStarted && <Canvas dpr={[1, 1.5]} frameloop={isInMainMenu ? 'demand' : 'always'} camera={{ position: [0, 3.5, 4], fov: 60 }}>
+      <div className={`camera-viewport w-full h-full ${isCamcorderVisualActive ? 'outlast-nightvision-viewport' : ''}`}>
+        <Canvas dpr={[1, 1.5]} frameloop={isInMainMenu && sceneReady ? 'demand' : 'always'} camera={{ position: [0, 3.5, 4], fov: 60 }}>
           <color attach="background" args={['#020403']} />
-          <fog attach="fog" args={['#020503', 2.0, isCamcorderActive ? 16 : 13]} />
+          <fog attach="fog" args={['#020503', 2.0, isCamcorderVisualActive ? 16 : 13]} />
 
           {/* Iluminación base adaptada: En visión nocturna el ambiente mantiene oscuridad tétrica de Outlast */}
           <ambientLight
-            intensity={isCamcorderActive ? 0.22 : 0.08}
-            color={isCamcorderActive ? "#183e25" : "#16221a"}
+            intensity={isCamcorderVisualActive ? 0.22 : 0.08}
+            color={isCamcorderVisualActive ? "#183e25" : "#16221a"}
           />
           <hemisphereLight
-            args={isCamcorderActive ? ['#285936', '#0a1a10', 0.4] : ['#29362c', '#080c09', 0.22]}
+            args={isCamcorderVisualActive ? ['#285936', '#0a1a10', 0.4] : ['#29362c', '#080c09', 0.22]}
           />
 
           {/* Rebote ambiental de hospital psiquiátrico */}
           <pointLight
             position={[-5, 1.5, -1]}
-            intensity={isCamcorderActive ? 7 : 11}
+            intensity={isCamcorderVisualActive ? 7 : 11}
             distance={7.5}
-            color={isCamcorderActive ? "#266b3d" : "#1c3629"}
+            color={isCamcorderVisualActive ? "#266b3d" : "#1c3629"}
           />
           <pointLight
             position={[-3.8, 1.15, 0.7]}
-            intensity={isCamcorderActive ? 4 : 5}
+            intensity={isCamcorderVisualActive ? 4 : 5}
             distance={5.0}
-            color={isCamcorderActive ? "#215733" : "#1d3628"}
+            color={isCamcorderVisualActive ? "#215733" : "#1d3628"}
           />
 
           {/* Linterna Infrarroja (IR Spotlight) que ilumina hacia donde mira el jugador con zoom dinámico */}
-          <CamcorderIRSpotlight active={isCamcorderActive} zoom={zoomLevel} />
+          <CamcorderIRSpotlight active={isCamcorderVisualActive} zoom={zoomLevel} />
 
-          <Room isCamcorderActive={isCamcorderActive} scare={scare} />
+          <Room isCamcorderActive={isCamcorderVisualActive} />
           <Suspense fallback={null}>
             <Desk />
             <Monitor
@@ -1632,6 +1653,7 @@ export default function DesktopScene() {
               isScreenActive={animatingTo === 'terminal' || activeOverlay === 'terminal'}
               isInMainMenu={isInMainMenu}
               onClose={handleClose}
+              onLoginFailure={playJumpscare}
               onHover={setHoveredItem}
               onUnhover={() => setHoveredItem(null)}
             />
@@ -1642,7 +1664,7 @@ export default function DesktopScene() {
               onUnhover={() => setHoveredItem(null)}
             />
             {/* La cámara desaparece al agarrarla y solo reaparece en la mesa cuando la pantalla está completamente en negro */}
-            {isCameraOnDesk && (
+            <group visible={isCameraOnDesk}>
               <InteractiveCamera
                 onClick={handleToggleCamcorder}
                 isZooming={animatingTo !== 'none'}
@@ -1650,24 +1672,27 @@ export default function DesktopScene() {
                 onHover={setHoveredItem}
                 onUnhover={() => setHoveredItem(null)}
               />
-            )}
+            </group>
             <Clutter />
           </Suspense>
-          <FloatingDust isCamcorderActive={isCamcorderActive} />
+          <FloatingDust isCamcorderActive={isCamcorderVisualActive} />
 
           <CameraController
             target={animatingTo}
             isCamcorderActive={isCamcorderActive}
             zoomLevel={zoomLevel}
             baseYaw={baseYaw}
-            scare={scare}
             onReachedTarget={(target) => {
+              if (target === 'scare') {
+                finishScareTurn();
+                return;
+              }
               if (activeOverlay !== target) setActiveOverlay(target);
             }}
           />
 
           <SceneReady onReady={markSceneReady} />
-        </Canvas>}
+        </Canvas>
       </div>
 
       {/* Indicadores visuales interactivos de giro de 90° (Solo la flecha, visibles siempre y en modo videocámara) */}
@@ -1678,11 +1703,10 @@ export default function DesktopScene() {
               e.stopPropagation();
               handleTurn('left');
             }}
-            className={`fixed left-4 sm:left-8 top-1/2 -translate-y-1/2 z-[45] w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200 hover:scale-110 active:scale-95 shadow-[0_0_20px_rgba(0,0,0,0.85)] backdrop-blur-sm cursor-pointer select-none border ${
-              isCamcorderActive
-                ? 'bg-black/80 border-[#3dff84]/70 text-[#3dff84] shadow-[0_0_15px_rgba(61,255,132,0.5)] opacity-85 hover:opacity-100'
-                : 'bg-black/75 border-white/30 hover:border-white text-white/80 hover:text-white opacity-70 hover:opacity-100'
-            }`}
+            className={`fixed left-4 sm:left-8 top-1/2 -translate-y-1/2 z-[45] w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200 hover:scale-110 active:scale-95 shadow-[0_0_20px_rgba(0,0,0,0.85)] backdrop-blur-sm cursor-pointer select-none border ${isCamcorderActive
+              ? 'bg-black/80 border-[#3dff84]/70 text-[#3dff84] shadow-[0_0_15px_rgba(61,255,132,0.5)] opacity-85 hover:opacity-100'
+              : 'bg-black/75 border-white/30 hover:border-white text-white/80 hover:text-white opacity-70 hover:opacity-100'
+              }`}
             title="Girar 90° a la izquierda (o pulsa Q / ◀)"
           >
             ◀
@@ -1693,11 +1717,10 @@ export default function DesktopScene() {
               e.stopPropagation();
               handleTurn('right');
             }}
-            className={`fixed right-4 sm:right-8 top-1/2 -translate-y-1/2 z-[45] w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200 hover:scale-110 active:scale-95 shadow-[0_0_20px_rgba(0,0,0,0.85)] backdrop-blur-sm cursor-pointer select-none border ${
-              isCamcorderActive
-                ? 'bg-black/80 border-[#3dff84]/70 text-[#3dff84] shadow-[0_0_15px_rgba(61,255,132,0.5)] opacity-85 hover:opacity-100'
-                : 'bg-black/75 border-white/30 hover:border-white text-white/80 hover:text-white opacity-70 hover:opacity-100'
-            }`}
+            className={`fixed right-4 sm:right-8 top-1/2 -translate-y-1/2 z-[45] w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-200 hover:scale-110 active:scale-95 shadow-[0_0_20px_rgba(0,0,0,0.85)] backdrop-blur-sm cursor-pointer select-none border ${isCamcorderActive
+              ? 'bg-black/80 border-[#3dff84]/70 text-[#3dff84] shadow-[0_0_15px_rgba(61,255,132,0.5)] opacity-85 hover:opacity-100'
+              : 'bg-black/75 border-white/30 hover:border-white text-white/80 hover:text-white opacity-70 hover:opacity-100'
+              }`}
             title="Girar 90° a la derecha (o pulsa E / ▶)"
           >
             ▶
@@ -1713,6 +1736,7 @@ export default function DesktopScene() {
       {/* Visión Nocturna y HUD de Videocámara Outlast (100% fiel a la referencia) */}
       <OutlastCamcorderOverlay
         isActive={isCamcorderActive}
+        isPrewarming={isCamcorderPrewarming}
         onToggleActive={handleToggleCamcorder}
         zoom={zoomLevel}
         onZoomChange={setZoomLevel}
@@ -1732,8 +1756,8 @@ export default function DesktopScene() {
               {hoveredItem === 'document'
                 ? 'coger Documento'
                 : hoveredItem === 'camcorder'
-                ? 'coger Videocámara'
-                : 'usar Terminal'}
+                  ? 'coger Videocámara'
+                  : 'usar Terminal'}
             </span>
           </div>
         </div>
@@ -1768,6 +1792,28 @@ export default function DesktopScene() {
       )}
 
       {/* Overlays */}
+      <div className={`${isJumpscarePlaying ? 'fixed' : 'hidden'} inset-0 z-[100] overflow-hidden bg-black`}>
+        <video
+          ref={jumpscareRef}
+          preload="auto"
+          playsInline
+          src="/assets/animations/jumpscare.mp4"
+          onCanPlayThrough={() => setIsJumpscareReady(true)}
+          onEnded={() => { setIsJumpscarePlaying(false); isScareSequenceRef.current = false; }}
+          onError={() => { setIsJumpscarePlaying(false); setIsJumpscareReady(true); isScareSequenceRef.current = false; }}
+          aria-label="Jumpscare"
+          className="h-full w-full scale-[1.03] object-cover"
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: 'radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,0.32) 68%, #000 100%)' }}
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none fixed inset-0 z-[120] bg-black transition-opacity duration-500 ${isTransitionBlack ? 'opacity-100' : 'opacity-0'}`}
+      />
+
       {activeOverlay === 'document' && <OutlastDocumentOverlay onClose={handleClose} />}
 
       {/* Menú de Inicio Auténtico de Outlast */}
@@ -1779,7 +1825,7 @@ export default function DesktopScene() {
           }}
         />
       )}
-      {hasStarted && !sceneReady && <SceneLoading />}
+      {(!sceneReady || !isJumpscareReady) && <SceneLoading />}
     </div>
   );
 }

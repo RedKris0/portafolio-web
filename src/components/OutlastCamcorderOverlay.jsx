@@ -18,6 +18,7 @@ export const playCamcorderSound = (type) => {
 export default function OutlastCamcorderOverlay({
   isDocumentOrTerminalOpen = false,
   isActive = false,
+  isPrewarming = false,
   onToggleActive,
   zoom = 1.0,
   onZoomChange,
@@ -32,12 +33,12 @@ export default function OutlastCamcorderOverlay({
   const prevActiveRef = useRef(isActive);
   useEffect(() => {
     if (prevActiveRef.current !== isActive) {
-      if (audioFeedback) {
+      if (!isPrewarming && audioFeedback) {
         playCamcorderSound(isActive ? 'nightvision_on' : 'nightvision_off');
       }
       prevActiveRef.current = isActive;
     }
-  }, [isActive, audioFeedback]);
+  }, [isActive, isPrewarming, audioFeedback]);
 
   // Parpadeo de REC y contador de timecode analógico (30 fps)
   useEffect(() => {
@@ -128,7 +129,9 @@ export default function OutlastCamcorderOverlay({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isActive, onToggleActive, zoom, onZoomChange, batteryCount]);
 
-  const overlayVisibilityClass = isActive
+  const overlayVisibilityClass = isPrewarming
+    ? 'opacity-[0.01]'
+    : isActive
     ? isDocumentOrTerminalOpen
       ? 'opacity-20'
       : 'opacity-100'

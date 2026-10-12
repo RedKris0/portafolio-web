@@ -25,16 +25,8 @@ function bindPose(scene) {
   prepareCharacterRig(scene);
 }
 const target = await loadRig('black_death_rigged.glb');
-const springtrap = await loadRig('springtrap_jumpscare.glb');
 const fbx = await fs.readFile(new URL('Old Man Idle.fbx', models));
 const oldMan = new FBXLoader().parse(fbx.buffer.slice(fbx.byteOffset, fbx.byteOffset + fbx.byteLength), '');
-const springNames = {
-  Hips: 'Hip_Bn_03', Spine2: 'Spine_Bn_012', Neck: 'Neck_Bn_032', Head: 'Head_Bn_033',
-  LeftShoulder: 'L_Clavicle_Bn_013', LeftArm: 'L_Arm_01_Bn_014', LeftForeArm: 'L_Arm_02_Bn_015', LeftHand: 'L_Arm_03_Bn_016',
-  RightShoulder: 'R_Clavicle_Bn_051', RightArm: 'R_Arm_01_Bn_052', RightForeArm: 'R_Arm_02_Bn_053', RightHand: 'R_Arm_03_Bn_054',
-  LeftUpLeg: 'L_Leg_01_Bn_04', LeftLeg: 'L_Knee_Bn_05', LeftFoot: 'L_Leg_02_Bn_06', LeftToeBase: 'L_Leg_03_Bn_07',
-  RightUpLeg: 'R_Leg_01_Bn_08', RightLeg: 'R_Knee_Bn_09', RightFoot: 'R_Leg_02_Bn_010', RightToeBase: 'R_Leg_03_Bn_011',
-};
 
 function bake(source, clip, name, getSourceName, loop) {
   bindPose(target.scene);
@@ -106,7 +98,6 @@ function bake(source, clip, name, getSourceName, loop) {
 }
 const clips = [
   bake(oldMan, oldMan.animations[0], 'Old Man Idle', name => `mixamorig${name}`, true),
-  bake(springtrap.scene, springtrap.animations.find(clip => clip.name === 'SpringTrap--Jumpscare'), 'Springtrap Jumpscare', name => springNames[name], false),
 ];
 const output = new URL('../public/assets/animations/black-death.json', import.meta.url);
 await fs.mkdir(new URL('.', output), { recursive: true });

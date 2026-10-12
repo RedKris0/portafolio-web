@@ -147,6 +147,11 @@
 }
 
 /* Filtro de Visión Nocturna Auténtico de Outlast (Transforma la vista 3D + Pantalla de Windows XP en fósforo verde militar P43) */
+.camera-viewport {
+  will-change: filter;
+  transform: translateZ(0);
+}
+
 .outlast-nightvision-viewport {
   filter: contrast(1.35) brightness(1.10) sepia(1) hue-rotate(82deg) saturate(2.4);
   transition: filter 0.15s ease-out;

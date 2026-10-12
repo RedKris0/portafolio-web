@@ -18,20 +18,23 @@ const playTerminalBeep = () => {
   playSound('terminal_beep', 0.45);
 };
 
-export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {}, onClose = () => {} }) {
+export const TERMINAL_PASSWORD = '1234';
+
+export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => { }, onClose = () => { }, onLoginFailure = () => { } }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [username, setUsername] = useState('crojas');
   const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
 
   // Estados de la consola interactiva (Foto de referencia Outlast)
   const [commandInput, setCommandInput] = useState('');
   const [consoleLogs, setConsoleLogs] = useState([
-    { type: 'header', text: 'Murkoff Analytics System Console {version 1.04}' },
-    { type: 'sub', text: '2026 Murkoff Corporation // Terminal: Cristóbal Rojas' },
+    { type: 'header', text: 'KRIS Analytics System Console {version 1.04}' },
+    { type: 'sub', text: '2026 KRIS Corporation // Terminal: Cristóbal Rojas' },
     { type: 'spacer' },
     { type: 'prompt', text: '>SystemCheck  //Cristobal_Rojas' },
-    { type: 'ok', text: '[OK] NÚCLEO DE DATOS: MURKOFF BI OS v3.1 ACTIVO' },
+    { type: 'ok', text: '[OK] NÚCLEO DE DATOS: KRIS BI OS v3.1 ACTIVO' },
     { type: 'ok', text: '[OK] ANALISTA ASIGNADO: CRISTÓBAL A. ROJAS PÉREZ' },
     { type: 'ok', text: '[OK] ESPECIALIDAD: INGENIERÍA DE DATOS & BUSINESS INTELLIGENCE' },
     { type: 'ok', text: '[OK] PIPELINE ACTIVO: CASO COLCHAGUA (PYMES) CONECTADO' },
@@ -60,7 +63,20 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     if (e) e.preventDefault();
     if (isLoggingIn || isLoggedIn) return;
 
+    if (!password) {
+      setLoginError('Escribe la contraseña para ingresar.');
+      return;
+    }
+
+    if (password !== TERMINAL_PASSWORD) {
+      setPassword('');
+      setLoginError('Contraseña incorrecta.');
+      onLoginFailure();
+      return;
+    }
+
     playXPClick();
+    setLoginError('');
     setIsLoggingIn(true);
 
     setTimeout(() => {
@@ -75,6 +91,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     setIsLoggedIn(false);
     setIsLoggingIn(false);
     setPassword('');
+    setLoginError('');
   };
 
   const executeCommand = (cmdText) => {
@@ -86,8 +103,8 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
 
     if (cleanCmd === 'ayuda' || cleanCmd === 'help') {
       newLogs.push(
-        { type: 'info', text: 'COMANDOS DISPONIBLES EN TERMINAL MURKOFF:' },
-        { type: 'text', text: '  proyectos    - Abrir repositorios de RedKris0' },
+        { type: 'info', text: 'COMANDOS DISPONIBLES EN TERMINAL KRIS:' },
+        { type: 'text', text: '  proyectos    - Abrir repositorios de RedKRIS0' },
         { type: 'text', text: '  creditos     - Autores y licencias de los modelos 3D' },
         { type: 'text', text: '  habilidades  - Listar stack técnico y tecnologías' },
         { type: 'text', text: '  contacto     - Canales de comunicación directa' },
@@ -98,24 +115,24 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     } else if (cleanCmd === 'proyectos' || cleanCmd === 'projects') {
       newLogs.push(
         { type: 'highlight', text: '=== REPOSITORIOS DE REDKRIS0 ===' },
-        ...['portafolio-web', 'KrisMusicManager', 'Verpelis', 'Wishlist'].map(name => ({
-          type: 'link', text: name, href: `https://github.com/RedKris0/${name}`,
+        ...['portafolio-web', 'KRISMusicManager', 'Verpelis'].map(name => ({
+          type: 'link', text: name, href: `https://github.com/RedKRIS0/${name}`,
         })),
-        { type: 'link', text: 'Ver todos los repositorios en GitHub', href: 'https://github.com/RedKris0?tab=repositories' }
+        { type: 'link', text: 'Ver todos los repositorios en GitHub', href: 'https://github.com/RedKRIS0?tab=repositories' }
       );
     } else if (cleanCmd === 'habilidades' || cleanCmd === 'skills') {
       newLogs.push(
         { type: 'highlight', text: '=== STACK TECNOLÓGICO & COMPETENCIAS ===' },
         { type: 'text', text: '• Análisis de Datos: Power BI, DAX, Power Query, Excel Avanzado' },
         { type: 'text', text: '• Bases de Datos: SQL Server, PostgreSQL, MySQL, Modelado Dimensional' },
-        { type: 'text', text: '• Programación & ETL: Python (Pandas, NumPy, SQLAlchemy), Pipelines' },
+        { type: 'text', text: '• Programación & ETL: Python (Pandas, NumPy) Pipelines' },
         { type: 'text', text: '• Desarrollo Frontend & 3D: React, Three.js, Astro, Tailwind CSS' },
         { type: 'ok', text: '[NIVEL DE HABILIDAD: PROFESIONAL COMPROBADO]' }
       );
     } else if (cleanCmd === 'contacto' || cleanCmd === 'contact') {
       newLogs.push(
         { type: 'highlight', text: '=== CANALES DE CONTACTO OFICIALES ===' },
-        { type: 'link', text: 'GitHub: RedKris0', href: 'https://github.com/RedKris0' },
+        { type: 'link', text: 'GitHub: RedKRIS0', href: 'https://github.com/RedKRIS0' },
         { type: 'link', text: 'Email: cristobalrp09@gmail.com', href: 'mailto:cristobalrp09@gmail.com' },
         { type: 'info', text: 'Disponible para contratación y proyectos de Business Intelligence.' }
       );
@@ -124,13 +141,11 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
         { type: 'highlight', text: '=== CRÉDITOS DE MODELOS 3D ===' },
         { type: 'link', text: 'Black Death (rigged) — Veterock (escala ajustada; animaciones adaptadas al rig)', href: 'https://skfb.ly/oLUyv' },
         { type: 'link', text: 'Licencia: Creative Commons Attribution 4.0', href: 'https://creativecommons.org/licenses/by/4.0/' },
-        { type: 'link', text: 'Springtrap Jumpscare — OrangeSauceu (movimiento adaptado a Black Death)', href: 'https://skfb.ly/6ZU6Y' },
-        { type: 'link', text: 'Licencia: Creative Commons Attribution 4.0', href: 'https://creativecommons.org/licenses/by/4.0/' },
         { type: 'text', text: 'Old Man Idle — Mixamo (movimiento adaptado a Black Death)' },
       );
     } else if (cleanCmd === 'limpiar' || cleanCmd === 'clear') {
       setConsoleLogs([
-        { type: 'header', text: 'Murkoff Analytics System Console {version 1.04}' },
+        { type: 'header', text: 'Analytics System Console {version 1.04}' },
         { type: 'prompt', text: '>SystemCheck  //Cristobal_Rojas' },
       ]);
       setCommandInput('');
@@ -195,11 +210,11 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
               </div>
               <div className="flex flex-col leading-tight">
                 <div className="text-2xl font-bold tracking-tight text-white flex items-center gap-1.5">
-                  <span className="font-light">Microsoft</span>
-                  <span className="font-black italic drop-shadow-[0_2px_3px_rgba(0,0,0,0.9)]">Windows</span>
-                  <span className="text-[#ff9015] font-black text-lg italic ml-1">XP</span>
+                  <span className="font-light">Macrosoft</span>
+                  <span className="font-black italic drop-shadow-[0_2px_3px_rgba(0,0,0,0.9)]">Systems</span>
+
                 </div>
-                <span className="text-xs text-blue-200 tracking-wider font-mono">Professional // Murkoff Terminal v3.1</span>
+                <span className="text-xs text-blue-200 tracking-wider font-mono">Professional // KRIS Terminal v3.1</span>
               </div>
             </div>
 
@@ -220,7 +235,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                   haga clic en su nombre de usuario
                 </p>
                 <div className="bg-black/30 border border-blue-400/30 rounded px-4 py-2 text-right">
-                  <div className="text-xs text-blue-300 font-mono font-semibold">MURKOFF PSYCHIATRIC SYSTEMS</div>
+                  <div className="text-xs text-blue-300 font-mono font-semibold">KRIS PSYCHIATRIC SYSTEMS</div>
                   <div className="text-[11px] text-blue-200/70 font-mono">AUTORIZACIÓN DE SEGURIDAD // NIVEL 3</div>
                 </div>
               </div>
@@ -264,8 +279,8 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                       <label className="block text-xs text-blue-100 font-medium mb-1">Nombre de usuario:</label>
                       <input
                         type="text"
-                        name="murkoff_user_token"
-                        id="murkoff_user_token"
+                        name="KRIS_user_token"
+                        id="KRIS_user_token"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         onKeyDown={(e) => playKeySound(e.key)}
@@ -284,8 +299,8 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
-                          name="murkoff_auth_key"
-                          id="murkoff_auth_key"
+                          name="KRIS_auth_key"
+                          id="KRIS_auth_key"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           onKeyDown={(e) => playKeySound(e.key)}
@@ -320,7 +335,11 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                     {isLoggingIn ? (
                       <div className="text-sm text-[#ffba08] font-bold mt-2 animate-pulse flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded">
                         <span className="inline-block w-2.5 h-2.5 rounded-full bg-[#ffba08]" />
-                        Iniciando sesión en Murkoff Systems...
+                        Iniciando sesión en KRIS Systems...
+                      </div>
+                    ) : loginError ? (
+                      <div role="alert" className="text-xs text-red-200 mt-2 bg-red-950/60 px-3 py-1.5 rounded border border-red-500/50">
+                        {loginError}
                       </div>
                     ) : (
                       <div className="text-xs text-[#ffd15c] mt-2 bg-black/35 px-3 py-1.5 rounded border border-[#ff9015]/30 flex items-center gap-2">
@@ -351,7 +370,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
             </button>
 
             <div className="text-blue-200/70 text-xs font-mono">
-              (C) 2026 Murkoff Psychiatric Systems. Todos los derechos reservados.
+              (C) 2026 KRIS Systems. Todos los derechos reservados.
             </div>
           </div>
         </div>
