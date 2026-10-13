@@ -307,16 +307,19 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
                   <span className="text-xs text-white/40 group-hover:text-green-300 font-mono">Ver Repos ↗</span>
                 </a>
 
-                <a
-                  href="mailto:cristobal.rojas.perez@example.com"
+
+                <button
+                  type="button"
+                  onClick={() => navigator.clipboard.writeText('cristobalrp09@gmail.com')}
                   className="flex items-center justify-between p-3 rounded bg-white/5 hover:bg-white/10 border border-white/15 hover:border-[#ff9015] text-white transition-all group"
                 >
+
                   <div className="flex items-center gap-3">
                     <span className="text-[#ff9015] font-bold text-lg font-mono">@</span>
                     <span className="font-medium tracking-wider">Correo Electrónico Directo</span>
                   </div>
                   <span className="text-xs text-white/40 group-hover:text-[#ff9015] font-mono">Enviar Correo ↗</span>
-                </a>
+                </button>
               </div>
             </div>
 
