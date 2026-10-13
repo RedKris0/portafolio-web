@@ -41,7 +41,7 @@ export default function SceneLoading() {
     <div className="scene-loading" role="status" aria-live="polite">
       <div className="scene-loading-grain" />
       <div className="scene-loading-content">
-        <p className="scene-loading-eyebrow">MURKOFF CORPORATION · ARCHIVO RESTRINGIDO</p>
+        <p className="scene-loading-eyebrow">PORTAFOLIO · INGENIERÍA EN PROGRAMACIÓN</p>
         <h1>ENTRANDO AL DESPACHO</h1>
         <span className="scene-loading-spinner" aria-hidden="true" />
         <p key={label} className="scene-loading-label">{errors.length ? 'No se pudo cargar un recurso' : active ? label : 'Preparando la escena para entrar'}</p>

@@ -18,10 +18,10 @@ export default function StatusBar() {
     <div className="flex justify-between items-end border-b-2 border-murkoff-dark pb-4 mb-8">
       <div>
         <h1 className="text-4xl font-bold text-murkoff-paper tracking-widest uppercase animate-pulse">
-          Archivo Confidencial
+          Portafolio Profesional
         </h1>
         <p className="text-murkoff-blood text-xl mt-2 font-bold tracking-widest">
-          ESTATUS: CLASIFICADO - MURKOFF CORP.
+          PERFIL: INGENIERO EN PROGRAMACIÓN
         </p>
       </div>
       <div className="text-right">

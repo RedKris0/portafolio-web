@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { playSound, playKeyboardSound } from '../utils/audioManager.js';
+import { assetPath } from '../utils/assetPath.js';
 
 // Reproducción de efectos de sonido pre-cargados con latencia cero
 const playXPChime = () => {
@@ -34,12 +35,12 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     { type: 'sub', text: '2026 KRIS Corporation // Terminal: Cristóbal Rojas' },
     { type: 'spacer' },
     { type: 'prompt', text: '>SystemCheck  //Cristobal_Rojas' },
-    { type: 'ok', text: '[OK] NÚCLEO DE DATOS: KRIS BI OS v3.1 ACTIVO' },
-    { type: 'ok', text: '[OK] ANALISTA ASIGNADO: CRISTÓBAL A. ROJAS PÉREZ' },
-    { type: 'ok', text: '[OK] ESPECIALIDAD: INGENIERÍA DE DATOS & BUSINESS INTELLIGENCE' },
+    { type: 'ok', text: '[OK] ENTORNO: KRIS DEV OS v3.1 ACTIVO' },
+    { type: 'ok', text: '[OK] INGENIERO: CRISTÓBAL A. ROJAS PÉREZ' },
+    { type: 'ok', text: '[OK] PERFIL: INGENIERÍA EN PROGRAMACIÓN' },
     { type: 'ok', text: '[OK] PIPELINE ACTIVO: CASO COLCHAGUA (PYMES) CONECTADO' },
     { type: 'ok', text: '[OK] STACK TÉCNICO: SQL, PYTHON, POWER BI, POSTGRESQL, ETL' },
-    { type: 'info', text: 'Escribe "ayuda" o "proyectos" para explorar expedientes clasificados.' },
+    { type: 'info', text: 'Escribe /ayuda para ver los comandos disponibles.' },
   ]);
 
   const terminalScrollRef = useRef(null);
@@ -94,23 +95,24 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     setLoginError('');
   };
 
-  const executeCommand = (cmdText) => {
-    const cleanCmd = (cmdText || commandInput).trim().toLowerCase();
+  const executeCommand = () => {
+    const cleanCmd = commandInput.trim().toLowerCase().replace(/^\//, '');
     if (!cleanCmd) return;
 
     playTerminalBeep();
-    const newLogs = [...consoleLogs, { type: 'input', text: `>${cmdText || commandInput}` }];
+    const newLogs = [...consoleLogs, { type: 'input', text: `>${commandInput}` }];
 
     if (cleanCmd === 'ayuda' || cleanCmd === 'help') {
       newLogs.push(
         { type: 'info', text: 'COMANDOS DISPONIBLES EN TERMINAL KRIS:' },
-        { type: 'text', text: '  proyectos    - Abrir repositorios de RedKRIS0' },
-        { type: 'text', text: '  creditos     - Autores y licencias de los modelos 3D' },
-        { type: 'text', text: '  habilidades  - Listar stack técnico y tecnologías' },
-        { type: 'text', text: '  contacto     - Canales de comunicación directa' },
-        { type: 'text', text: '  limpiar      - Limpiar el búfer de la consola' },
-        { type: 'text', text: '  check        - Ejecutar diagnóstico del sistema' },
-        { type: 'text', text: '  salir        - Cerrar sesión y volver al login' }
+        { type: 'text', text: '  /proyectos    - Abrir repositorios de RedKRIS0' },
+        { type: 'text', text: '  /colchagua    - Abrir la investigación de Colchagua' },
+        { type: 'text', text: '  /creditos     - Autores y licencias de los modelos 3D' },
+        { type: 'text', text: '  /habilidades  - Listar stack técnico y tecnologías' },
+        { type: 'text', text: '  /contacto     - Canales de comunicación directa' },
+        { type: 'text', text: '  /limpiar      - Limpiar el búfer de la consola' },
+        { type: 'text', text: '  /check        - Ejecutar diagnóstico del sistema' },
+        { type: 'text', text: '  /salir        - Cerrar sesión y volver al login' }
       );
     } else if (cleanCmd === 'proyectos' || cleanCmd === 'projects') {
       newLogs.push(
@@ -119,6 +121,12 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
           type: 'link', text: name, href: `https://github.com/RedKRIS0/${name}`,
         })),
         { type: 'link', text: 'Ver todos los repositorios en GitHub', href: 'https://github.com/RedKRIS0?tab=repositories' }
+      );
+    } else if (cleanCmd === 'colchagua') {
+      newLogs.push(
+        { type: 'highlight', text: '=== INVESTIGACIÓN COLCHAGUA ===' },
+        { type: 'link', text: 'Ver investigación en GitHub', href: 'https://github.com/rafajaque/Investigacion-Colchagua-' },
+        { type: 'link', text: 'Descargar archivo Power BI (.pbix)', href: assetPath('downloads/Colchagua_Resiliencia.pbix'), download: 'Colchagua_Resiliencia.pbix' }
       );
     } else if (cleanCmd === 'habilidades' || cleanCmd === 'skills') {
       newLogs.push(
@@ -134,7 +142,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
         { type: 'highlight', text: '=== CANALES DE CONTACTO OFICIALES ===' },
         { type: 'link', text: 'GitHub: RedKRIS0', href: 'https://github.com/RedKRIS0' },
         { type: 'link', text: 'Email: cristobalrp09@gmail.com', href: 'mailto:cristobalrp09@gmail.com' },
-        { type: 'info', text: 'Disponible para contratación y proyectos de Business Intelligence.' }
+        { type: 'info', text: 'Disponible para contratación y proyectos de desarrollo de software.' }
       );
     } else if (cleanCmd === 'creditos' || cleanCmd === 'créditos') {
       newLogs.push(
@@ -161,7 +169,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     } else {
       newLogs.push({
         type: 'error',
-        text: `Error: Comando desconocido "${cleanCmd}". Escribe "ayuda" para la lista de comandos.`,
+        text: `Error: Comando desconocido "${cleanCmd}". Escribe /ayuda para la lista de comandos.`,
       });
     }
 
@@ -468,8 +476,8 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                   if (log.type === 'link') {
                     return (
                       <div key={idx}>
-                        <a href={log.href} target="_blank" rel="noopener noreferrer" className="text-sky-300 underline underline-offset-2 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-300">
-                          {log.text} ↗
+                        <a href={log.href} download={log.download} target={log.download ? undefined : '_blank'} rel="noopener noreferrer" className="text-sky-300 underline underline-offset-2 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-300">
+                          {log.text} {log.download ? '↓' : '↗'}
                         </a>
                       </div>
                     );
@@ -547,7 +555,7 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                     value={commandInput}
                     onChange={(e) => setCommandInput(e.target.value)}
                     onKeyDown={(e) => playKeySound(e.key)}
-                    placeholder="Escribe un comando (ej: proyectos, ayuda)..."
+                    placeholder="/ayuda"
                     className="flex-1 bg-transparent text-white font-mono text-xs focus:outline-none placeholder:text-white/40"
                     ref={commandInputRef}
                   />
@@ -559,19 +567,6 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
                   </button>
                 </form>
 
-                {/* Accesos rápidos de un clic para comodidad del usuario */}
-                <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-white/10 text-[10px]">
-                  <span className="text-white/40 self-center">ACCESOS RÁPIDOS:</span>
-                  {['proyectos', 'habilidades', 'contacto', 'creditos', 'check', 'limpiar'].map((cmd) => (
-                    <button
-                      key={cmd}
-                      onClick={() => executeCommand(cmd)}
-                      className="px-2 py-0.5 bg-white/5 hover:bg-white/20 border border-white/20 text-white/80 hover:text-white rounded-xs cursor-pointer uppercase transition-colors"
-                    >
-                      [{cmd}]
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           </div>

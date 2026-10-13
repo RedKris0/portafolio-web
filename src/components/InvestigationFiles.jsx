@@ -1,20 +1,9 @@
 import { useState, useEffect } from 'react';
+import { playSound } from '../utils/audioManager.js';
 
-const playBeep = () => {
-  try {
-    const audio = new Audio('/assets/sounds/terminal_beep.wav');
-    audio.volume = 0.4;
-    audio.play().catch(() => {});
-  } catch (e) {}
-};
+const playBeep = () => playSound('terminal_beep', 0.4);
 
-const playGlitchSound = () => {
-  try {
-    const audio = new Audio('/assets/sounds/terminal_glitch.wav');
-    audio.volume = 0.6;
-    audio.play().catch(() => {});
-  } catch (e) {}
-};
+const playGlitchSound = () => playSound('terminal_beep', 0.6);
 
 const files = [
   { id: 'pbi', name: 'EXP. COLCHAGUA_PBI', type: 'DASHBOARD' },
@@ -124,7 +113,7 @@ export default function InvestigationFiles() {
               <code className="text-murkoff-paper">
                 import pandas as pd<br/>
                 import numpy as np<br/>
-                import murkoff_secure_db as db<br/>
+                import secure_data_source as db<br/>
                 <br/>
                 data = db.connect_and_extract('colchagua_raw')<br/>
                 print(f"Filas recuperadas: &#123;len(data)&#125;")

@@ -45,12 +45,6 @@
   .scene-loading-grain, .scene-loading-label, .scene-loading-spinner { animation: none; }
 }
 
-@font-face {
-  font-family: 'Humble Wall';
-  src: url('/assets/fonts/HumbleWall.ttf') format('truetype');
-  font-display: swap;
-}
-
 @layer base {
   body {
     @apply bg-murkoff-black text-murkoff-paper font-typewriter overflow-x-hidden;
@@ -159,11 +153,11 @@
 
 /* Cursor icónico de Outlast: flecha negra con contorno blanco nítido */
 html, body, div, button, a, [role="button"], input, select, textarea {
-  cursor: url('/assets/cursor_outlast.svg') 2 2, auto !important;
+  cursor: var(--outlast-cursor), auto !important;
 }
 
 .outlast-cursor {
-  cursor: url('/assets/cursor_outlast.svg') 2 2, auto !important;
+  cursor: var(--outlast-cursor), auto !important;
 }
 
 

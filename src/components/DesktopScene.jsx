@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { prepareCharacterRig } from '../utils/characterRig.js';
 import { registerCharacterMaterials } from '../utils/legacyCharacterMaterials.js';
+import { assetPath } from '../utils/assetPath.js';
 import SceneLoading, { SceneReady } from './SceneLoading.jsx';
 import { playSound } from '../utils/audioManager.js';
 import InvestigationFiles from './InvestigationFiles.jsx';
@@ -51,7 +52,7 @@ const AsylumDoor = ({ isCamcorderActive = false }) => (
     <Box args={[2.4, 0.08, 0.14]} position={[0, 0.05, 0.12]} castShadow>
       <meshStandardMaterial color="#787e78" metalness={0.8} roughness={0.3} />
     </Box>
-    {/* Letrero institucional de Murkoff en la parte superior */}
+    {/* Letrero institucional en la parte superior */}
     <Plane args={[2.0, 0.36]} position={[0, 2.85, 0.12]}>
       <meshStandardMaterial color="#0c0e0c" roughness={0.5} />
     </Plane>
@@ -100,7 +101,7 @@ const BloodWallWritings = ({ isCamcorderActive = false }) => {
       <group position={[-1.2, 3.2, -5.14]}>
         {/* Palabra principal chorreante en sangre oscura */}
         <Text
-          font="/assets/fonts/Nosifer.ttf"
+          font={assetPath('assets/fonts/Nosifer.ttf')}
           fontSize={0.68}
           color="#540404"
           letterSpacing={0.12}
@@ -113,7 +114,7 @@ const BloodWallWritings = ({ isCamcorderActive = false }) => {
         {/* Segunda línea ensangrentada y tachada estilo paciente psiquiátrico (Foto 1) */}
         <Text
           position={[0, -0.72, 0]}
-          font="/assets/fonts/Creepster.ttf"
+          font={assetPath('assets/fonts/Creepster.ttf')}
           fontSize={0.44}
           color="#480303"
           letterSpacing={0.08}
@@ -140,7 +141,7 @@ const BloodWallWritings = ({ isCamcorderActive = false }) => {
             key={i}
             position={[x, y, 0.002]}
             rotation={[0, 0, rot]}
-            font="/assets/fonts/RockSalt.ttf"
+            font={assetPath('assets/fonts/RockSalt.ttf')}
             fontSize={size}
             color="#380303"
             letterSpacing={0.06}
@@ -166,7 +167,7 @@ const BloodWallWritings = ({ isCamcorderActive = false }) => {
       {/* Inscripciones en la pared lateral izquierda junto al conducto de ventilación */}
       <group position={[-9.43, 0.8, -2.8]} rotation={[0, Math.PI / 2, 0]}>
         <Text
-          font="/assets/fonts/Nosifer.ttf"
+          font={assetPath('assets/fonts/Nosifer.ttf')}
           fontSize={0.34}
           color="#420404"
           letterSpacing={0.05}
@@ -177,7 +178,7 @@ const BloodWallWritings = ({ isCamcorderActive = false }) => {
         </Text>
         <Text
           position={[0, -0.55, 0]}
-          font="/assets/fonts/Creepster.ttf"
+          font={assetPath('assets/fonts/Creepster.ttf')}
           fontSize={0.24}
           color="#380303"
           letterSpacing={0.08}
@@ -193,17 +194,17 @@ const BloodWallWritings = ({ isCamcorderActive = false }) => {
         ))}
       </group>
 
-      {/* Inscripción conspirativa de Murkoff cerca del archivador */}
+      {/* Inscripción cerca del archivador */}
       <group position={[4.6, -1.8, -5.14]} rotation={[0, 0, -0.04]}>
         <Text
-          font="/assets/fonts/RockSalt.ttf"
+          font={assetPath('assets/fonts/RockSalt.ttf')}
           fontSize={0.19}
           color="#3e0505"
           letterSpacing={0.04}
           anchorX="center"
           anchorY="middle"
         >
-          MURKOFF MIENTE // TERAPIA COGNITIVA
+          CREAR // PROBAR // MEJORAR
         </Text>
       </group>
     </group>
@@ -375,7 +376,7 @@ const InvestigationCorkboard = ({ isCamcorderActive = false }) => (
     {/* Credenciales de acceso escritas en la pared debajo del tablero con fuente Humble Wall */}
     <group scale={isCamcorderActive ? 1 : 0} position={[0, -1.45, 0.015]} rotation={[0, 0, -0.025]}>
       <Text
-        font="/assets/fonts/HumbleWall.ttf"
+        font={assetPath('assets/fonts/HumbleWall.ttf')}
         fontSize={0.28}
         color="#4e0505"
         letterSpacing={0.06}
@@ -386,7 +387,7 @@ const InvestigationCorkboard = ({ isCamcorderActive = false }) => (
       </Text>
       <Text
         position={[0, -0.34, 0]}
-        font="/assets/fonts/HumbleWall.ttf"
+        font={assetPath('assets/fonts/HumbleWall.ttf')}
         fontSize={0.28}
         color="#4e0505"
         letterSpacing={0.06}
@@ -430,8 +431,8 @@ const AirDuctVent = () => (
 );
 
 const AnatomicalSkeleton = () => {
-  const { scene } = useGLTF('/assets/models/black_death_rigged.glb', true, true, registerCharacterMaterials);
-  const animationData = useLoader(THREE.FileLoader, '/assets/animations/black-death.json');
+  const { scene } = useGLTF(assetPath('assets/models/black_death_rigged.glb'), true, true, registerCharacterMaterials);
+  const animationData = useLoader(THREE.FileLoader, assetPath('assets/animations/black-death.json'));
   const animations = useMemo(
     () => JSON.parse(animationData).map((clip) => THREE.AnimationClip.parse(clip)),
     [animationData],
@@ -545,9 +546,9 @@ const CamcorderIRSpotlight = ({ active, zoom = 1.0 }) => {
 // Material PBR para los muros de bloques de hormigón del hospital psiquiátrico (Foto 1)
 const HospitalWallMaterial = ({ repeat = [5.5, 2.6], color = '#7c8b83' }) => {
   const [diffuse, normal, roughness] = useTexture([
-    '/assets/textures/wall/concrete_block_wall_diff_1k.jpg',
-    '/assets/textures/wall/concrete_block_wall_nor_1k.jpg',
-    '/assets/textures/wall/concrete_block_wall_rough_1k.jpg'
+    assetPath('assets/textures/wall/concrete_block_wall_diff_1k.jpg'),
+    assetPath('assets/textures/wall/concrete_block_wall_nor_1k.jpg'),
+    assetPath('assets/textures/wall/concrete_block_wall_rough_1k.jpg')
   ]);
 
   useEffect(() => {
@@ -778,7 +779,7 @@ const BloodStain = ({ position, rotation = 0, size = [1.4, 0.7], opacity = 0.82 
 };
 
 const BloodTextureStain = ({ file, position, rotation = 0, planeRotation = null, size, opacity = 1 }) => {
-  const sourceTexture = useTexture(`/assets/textures/BlueRoseSonata%20Blood%20FX%20Pack/${file}`);
+  const sourceTexture = useTexture(assetPath(`assets/textures/BlueRoseSonata%20Blood%20FX%20Pack/${file}`));
 
   useEffect(() => {
     if (sourceTexture) {
@@ -1070,7 +1071,7 @@ const DocumentFolder = ({ onClick, isZooming, onHover, onUnhover }) => {
 
 const InteractiveCamera = ({ onClick, isZooming, isActive, onHover, onUnhover }) => {
   const [hovered, setHovered] = useState(false);
-  const { scene } = useGLTF('/assets/models/low_poly_outlast_camera.glb');
+  const { scene } = useGLTF(assetPath('assets/models/low_poly_outlast_camera.glb'));
   const cameraModel = useMemo(() => scene.clone(true), [scene]);
 
   // Contorno blanco invertido (Inverted Hull) para silueta 3D nítida en hover
@@ -1163,7 +1164,7 @@ const InteractiveCamera = ({ onClick, isZooming, isActive, onHover, onUnhover })
 
 
 const Keyboard = () => {
-  const { scene } = useGLTF('/assets/models/keyboard.glb');
+  const { scene } = useGLTF(assetPath('assets/models/keyboard.glb'));
   const keyboard = useMemo(() => scene.clone(true), [scene]);
 
   useEffect(() => {
@@ -1464,7 +1465,7 @@ export default function DesktopScene() {
   const ambientAudioRef = useRef(null);
 
   useEffect(() => {
-    const audio = new Audio('/assets/sounds/ambiencesound.wav');
+    const audio = new Audio(assetPath('assets/sounds/ambiencesound.wav'));
     audio.loop = true;
     audio.volume = 0.22; // Nivel bajo y pesado para generar tensión inmersiva
     ambientAudioRef.current = audio;
@@ -1754,7 +1755,7 @@ export default function DesktopScene() {
             <span>
               para{' '}
               {hoveredItem === 'document'
-                ? 'coger Documento'
+                ? 'ver Perfil profesional'
                 : hoveredItem === 'camcorder'
                   ? 'coger Videocámara'
                   : 'usar Terminal'}
@@ -1797,7 +1798,7 @@ export default function DesktopScene() {
           ref={jumpscareRef}
           preload="auto"
           playsInline
-          src="/assets/animations/jumpscare.mp4"
+          src={assetPath('assets/animations/jumpscare.mp4')}
           onCanPlayThrough={() => setIsJumpscareReady(true)}
           onEnded={() => { setIsJumpscarePlaying(false); isScareSequenceRef.current = false; }}
           onError={() => { setIsJumpscarePlaying(false); setIsJumpscareReady(true); isScareSequenceRef.current = false; }}

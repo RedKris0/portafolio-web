@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { playSound } from '../utils/audioManager.js';
+import { assetPath } from '../utils/assetPath.js';
 
 export default function OutlastMainMenu({ onStartGame, onResetGame }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -92,7 +93,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
       {/* 1. Fondo atmosférico de pasillo con silla de ruedas en visión nocturna (Fotos 1 y 2) */}
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src="/assets/images/menu_bg.jpg"
+          src={assetPath('assets/images/menu_bg.jpg')}
           alt="Outlast Asylum Corridor"
           className="w-full h-full object-cover object-center filter brightness-95 contrast-110 scale-100 animate-[pulse_10s_ease-in-out_infinite]"
         />
@@ -152,7 +153,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
           {/* Subtítulo oficial del analista */}
           <div className="mt-3 flex items-center gap-3 text-white/75 font-mono text-xs sm:text-sm tracking-[0.45em] uppercase">
             <span className="inline-block w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-            <span>CRISTÓBAL ROJAS // BUSINESS INTELLIGENCE</span>
+            <span>CRISTÓBAL ROJAS // INGENIERO EN PROGRAMACIÓN</span>
           </div>
         </div>
 
@@ -192,7 +193,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
 
         {/* Pie de página con versión e instrucciones */}
         <div className="w-full max-w-4xl flex justify-between items-center text-white/40 font-mono text-[11px] tracking-widest px-4 border-t border-white/10 pt-3">
-          <span>MURKOFF CORP // SISTEMAS v3.1</span>
+          <span>PORTAFOLIO // SISTEMAS v3.1</span>
           <span className="hidden sm:inline">Usa [↑ / ↓] para navegar • [ENTER] para seleccionar</span>
           <span>© 2026 CRISTÓBAL ROJAS</span>
         </div>
@@ -294,7 +295,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
 
             <div className="space-y-4 text-sm">
               <p className="text-white/70 text-xs leading-relaxed">
-                Disponible para oportunidades en <strong className="text-white">Business Intelligence, Análisis de Datos y Arquitectura de Datos</strong>.
+                Disponible para oportunidades en <strong className="text-white">desarrollo de software, aplicaciones web y soluciones de datos</strong>.
               </p>
 
               <div className="space-y-3 pt-2">

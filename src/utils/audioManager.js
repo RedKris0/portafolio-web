@@ -1,20 +1,22 @@
+import { assetPath } from './assetPath.js';
+
 // Audio Manager: Pre-carga y reproducción con latencia cero de efectos de sonido de Outlast
 
 const SOUND_FILES = {
-  ambience: '/assets/sounds/ambiencesound.wav',
-  camera_pickup: '/assets/sounds/camera_pickup.wav',
-  camera_turn: '/assets/sounds/camera_turn.wav',
-  nightvision_on: '/assets/sounds/nightvision_on.wav',
-  nightvision_off: '/assets/sounds/nightvision_off.wav',
-  battery_reload: '/assets/sounds/battery_reload.wav',
-  low_battery: '/assets/sounds/low_battery.wav',
-  terminal_beep: '/assets/sounds/terminal_beep.wav',
-  key1: '/assets/sounds/Key1.wav',
-  key2: '/assets/sounds/key2.wav',
-  key3: '/assets/sounds/key3.wav',
-  space: '/assets/sounds/Space.wav',
-  xp_click: '/assets/sounds/xp_click.mp3',
-  xp_startup: '/assets/sounds/xp_startup.mp3',
+  ambience: assetPath('assets/sounds/ambiencesound.wav'),
+  camera_pickup: assetPath('assets/sounds/camera_pickup.wav'),
+  camera_turn: assetPath('assets/sounds/camera_turn.wav'),
+  nightvision_on: assetPath('assets/sounds/nightvision_on.wav'),
+  nightvision_off: assetPath('assets/sounds/nightvision_off.wav'),
+  battery_reload: assetPath('assets/sounds/battery_reload.wav'),
+  low_battery: assetPath('assets/sounds/low_battery.wav'),
+  terminal_beep: assetPath('assets/sounds/terminal_beep.wav'),
+  key1: assetPath('assets/sounds/Key1.wav'),
+  key2: assetPath('assets/sounds/key2.wav'),
+  key3: assetPath('assets/sounds/key3.wav'),
+  space: assetPath('assets/sounds/Space.wav'),
+  xp_click: assetPath('assets/sounds/xp_click.mp3'),
+  xp_startup: assetPath('assets/sounds/xp_startup.mp3'),
 };
 
 // Caché de elementos Audio pre-cargados

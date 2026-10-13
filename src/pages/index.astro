@@ -1,16 +1,16 @@
 ---
 import '../styles/global.css';
 import DesktopScene from '../components/DesktopScene.jsx';
+const cursorUrl = `${import.meta.env.BASE_URL}/assets/textures/cursor_outlast.svg`;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es" style={`--outlast-cursor: url("${cursorUrl}") 2 2`}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Expediente Desclasificado: Cristobal Antonio Rojas Perez - Analista de Datos / Business Intelligence" />
+    <meta name="description" content="Portafolio de Cristobal Antonio Rojas Perez, Ingeniero en Programación" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Expediente: C.A. Rojas Perez | BI</title>
+    <title>C.A. Rojas Perez | Ingeniero en Programación</title>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
   </head>
   <body class="bg-black m-0 p-0 overflow-hidden font-typewriter select-none">
