@@ -5,6 +5,7 @@ import { assetPath } from '../utils/assetPath.js';
 export default function OutlastMainMenu({ onStartGame, onResetGame }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [activeModal, setActiveModal] = useState(null); // 'options' | 'contact' | 'credits' | null
+  const [emailCopied, setEmailCopied] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Opciones de audio y gráficos
@@ -26,6 +27,16 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
 
   const playSelectSound = () => {
     playSound('camera_pickup', 0.6);
+  };
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText('cristobalrp09@gmail.com');
+      setEmailCopied(true);
+      setTimeout(() => setEmailCopied(false), 2000);
+    } catch {
+      setEmailCopied(false);
+    }
   };
 
   const handleSelect = (index) => {
@@ -298,7 +309,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
                   href="https://github.com/RedKris0"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 rounded bg-white/5 hover:bg-white/10 border border-white/15 hover:border-green-400 text-white transition-all group"
+                  className="flex w-full items-center justify-between p-3 rounded bg-white/5 hover:bg-white/10 border border-white/15 hover:border-green-400 text-white transition-all group"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-green-400 font-bold text-lg font-mono">GH</span>
@@ -310,16 +321,23 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
 
                 <button
                   type="button"
-                  onClick={() => navigator.clipboard.writeText('cristobalrp09@gmail.com')}
-                  className="flex items-center justify-between p-3 rounded bg-white/5 hover:bg-white/10 border border-white/15 hover:border-[#ff9015] text-white transition-all group"
+                  onClick={copyEmail}
+                  className="flex w-full items-center justify-between p-3 rounded bg-white/5 hover:bg-white/10 border border-white/15 hover:border-[#ff9015] text-left text-white transition-all group"
                 >
 
                   <div className="flex items-center gap-3">
                     <span className="text-[#ff9015] font-bold text-lg font-mono">@</span>
                     <span className="font-medium tracking-wider">Correo Electrónico Directo</span>
                   </div>
-                  <span className="text-xs text-white/40 group-hover:text-[#ff9015] font-mono">Enviar Correo ↗</span>
+                  <span className="text-xs text-white/40 group-hover:text-[#ff9015] font-mono">Copiar</span>
                 </button>
+                <p
+                  role="status"
+                  aria-live="polite"
+                  className={`min-h-4 text-center text-xs font-mono text-[#ff9015] transition-opacity ${emailCopied ? 'opacity-100' : 'opacity-0'}`}
+                >
+                  Correo copiado al portapapeles
+                </p>
               </div>
             </div>
 
