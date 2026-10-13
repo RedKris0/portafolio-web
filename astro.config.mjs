@@ -4,7 +4,7 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://crpprogamer.github.io',
+  site: 'https://redkris0.github.io',
   base: '/portafolio-web',
   integrations: [react(), tailwind()],
   devToolbar: {
