@@ -21,7 +21,7 @@ const playTerminalBeep = () => {
 
 export const TERMINAL_PASSWORD = '1234';
 
-export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => { }, onClose = () => { }, onLoginFailure = () => { } }) {
+export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => { }, onClose = () => { }, onLoginFailure = () => { }, onOpenInvestigation = () => { } }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [username, setUsername] = useState('crojas');
@@ -125,9 +125,11 @@ export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => {
     } else if (cleanCmd === 'colchagua') {
       newLogs.push(
         { type: 'highlight', text: '=== INVESTIGACIÓN COLCHAGUA ===' },
+        { type: 'ok', text: '[OK] ABRIENDO HISTORIA, EVIDENCIA Y DECISIONES...' },
         { type: 'link', text: 'Ver investigación en GitHub', href: 'https://github.com/rafajaque/Investigacion-Colchagua-' },
         { type: 'link', text: 'Descargar archivo Power BI (.pbix)', href: assetPath('downloads/Colchagua_Resiliencia.pbix'), download: 'Colchagua_Resiliencia.pbix' }
       );
+      onOpenInvestigation();
     } else if (cleanCmd === 'habilidades' || cleanCmd === 'skills') {
       newLogs.push(
         { type: 'highlight', text: '=== STACK TECNOLÓGICO & COMPETENCIAS ===' },

@@ -858,7 +858,7 @@ const MONITOR_SCREEN = {
 // Html transform usa 40 px por unidad con distanceFactor=10.
 const MONITOR_SCREEN_SCALE = MONITOR_SCREEN.width * 40 / MONITOR_SCREEN.pixelWidth;
 
-const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onClose, onLoginFailure, onHover, onUnhover }) => {
+const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onClose, onLoginFailure, onOpenInvestigation, onHover, onUnhover }) => {
   const [hovered, setHovered] = useState(false);
   useCursor(hovered && !isZooming && !isScreenActive && !isInMainMenu);
 
@@ -944,6 +944,7 @@ const Monitor = ({ onClick, isZooming, isScreenActive, isInMainMenu = false, onC
                   onZoomIn={onClick}
                   onClose={onClose}
                   onLoginFailure={onLoginFailure}
+                  onOpenInvestigation={onOpenInvestigation}
                 />
               </div>
             </Html>
@@ -1527,6 +1528,15 @@ export default function DesktopScene() {
     else closeView();
   };
 
+  const closeInvestigation = () => {
+    if (animatingTo === 'terminal') {
+      setActiveOverlay('terminal');
+    } else {
+      setActiveOverlay('none');
+      setIsInMainMenu(true);
+    }
+  };
+
   const playJumpscare = () => {
     if (isScareSequenceRef.current) return;
     isScareSequenceRef.current = true;
@@ -1587,8 +1597,11 @@ export default function DesktopScene() {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
       if (e.key === 'Escape') {
-        if (isInMainMenu) return;
-        if (activeOverlay !== 'none' || animatingTo === 'terminal') {
+        if (activeOverlay === 'investigation') {
+          closeInvestigation();
+        } else if (isInMainMenu) {
+          return;
+        } else if (activeOverlay !== 'none' || animatingTo === 'terminal') {
           handleClose();
         } else if (isCamcorderActive) {
           handleToggleCamcorder();
@@ -1655,6 +1668,7 @@ export default function DesktopScene() {
               isInMainMenu={isInMainMenu}
               onClose={handleClose}
               onLoginFailure={playJumpscare}
+              onOpenInvestigation={() => setActiveOverlay('investigation')}
               onHover={setHoveredItem}
               onUnhover={() => setHoveredItem(null)}
             />
@@ -1688,7 +1702,7 @@ export default function DesktopScene() {
                 finishScareTurn();
                 return;
               }
-              if (activeOverlay !== target) setActiveOverlay(target);
+              if (activeOverlay === 'none') setActiveOverlay(target);
             }}
           />
 
@@ -1816,11 +1830,16 @@ export default function DesktopScene() {
       />
 
       {activeOverlay === 'document' && <OutlastDocumentOverlay onClose={handleClose} />}
+      {activeOverlay === 'investigation' && <InvestigationFiles onClose={closeInvestigation} />}
 
       {/* Menú de Inicio Auténtico de Outlast */}
       {isInMainMenu && (
         <OutlastMainMenu
           onStartGame={startGame}
+          onOpenInvestigation={() => {
+            setIsInMainMenu(false);
+            setActiveOverlay('investigation');
+          }}
           onResetGame={() => {
             handleClose();
           }}

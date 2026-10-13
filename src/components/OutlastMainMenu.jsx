@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { playSound } from '../utils/audioManager.js';
 import { assetPath } from '../utils/assetPath.js';
 
-export default function OutlastMainMenu({ onStartGame, onResetGame }) {
+export default function OutlastMainMenu({ onStartGame, onResetGame, onOpenInvestigation }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [activeModal, setActiveModal] = useState(null); // 'options' | 'contact' | 'credits' | null
   const [emailCopied, setEmailCopied] = useState(false);
@@ -16,6 +16,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
   // Menú principal idéntico a las referencias (Fotos 1 y 2)
   const menuItems = [
     { id: 'new_game', label: 'Nueva partida' },
+    { id: 'colchagua', label: 'Caso Colchagua' },
     { id: 'options', label: 'Opciones' },
     { id: 'contact', label: 'Contacto' },
     { id: 'credits', label: 'Créditos' },
@@ -46,6 +47,8 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
     if (item.id === 'new_game') {
       if (onResetGame) onResetGame();
       launchGame(true);
+    } else if (item.id === 'colchagua') {
+      onOpenInvestigation();
     } else if (item.id === 'options') {
       setActiveModal('options');
     } else if (item.id === 'contact') {
@@ -375,6 +378,9 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
               <p>
                 <strong>Desarrollado con:</strong> Astro, React Three Fiber, Three.js, Tailwind CSS y Web Audio API.
               </p>
+<p>
+<strong>Uso de IA:</strong> ChatGPT/Codex apoyó la auditoría, programación, depuración y redacción. Las fuentes, métricas y conclusiones fueron revisadas contra los archivos reproducibles del proyecto; la responsabilidad y defensa técnica corresponden al autor.
+</p>
               <p className="text-white/50 text-[11px] pt-2">
                 Homenaje no comercial a la saga Outlast (propiedad de Red Barrels Inc.)
               </p>
