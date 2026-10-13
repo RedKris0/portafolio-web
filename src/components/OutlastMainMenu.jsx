@@ -14,7 +14,6 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
 
   // Menú principal idéntico a las referencias (Fotos 1 y 2)
   const menuItems = [
-    { id: 'continue', label: 'Continuar' },
     { id: 'new_game', label: 'Nueva partida' },
     { id: 'options', label: 'Opciones' },
     { id: 'contact', label: 'Contacto' },
@@ -33,9 +32,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
     const item = menuItems[index];
     playSelectSound();
 
-    if (item.id === 'continue') {
-      launchGame(false);
-    } else if (item.id === 'new_game') {
+    if (item.id === 'new_game') {
       if (onResetGame) onResetGame();
       launchGame(true);
     } else if (item.id === 'options') {
@@ -56,9 +53,9 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => { });
     } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => { });
     }
   };
 
@@ -178,11 +175,10 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
 
                 {/* Texto de la opción en Courier Prime con espaciado amplio */}
                 <span
-                  className={`relative z-10 text-lg sm:text-xl font-bold tracking-[0.25em] transition-all duration-150 ${
-                    isSelected
-                      ? 'text-white scale-105 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]'
-                      : 'text-white/60 hover:text-white/85'
-                  }`}
+                  className={`relative z-10 text-lg sm:text-xl font-bold tracking-[0.25em] transition-all duration-150 ${isSelected
+                    ? 'text-white scale-105 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]'
+                    : 'text-white/60 hover:text-white/85'
+                    }`}
                 >
                   {item.label}
                 </span>
@@ -238,11 +234,10 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
                 <span className="text-white/80 text-xs tracking-wider">RUIDO / GRANO DE VIDEOCÁMARA</span>
                 <button
                   onClick={() => setGrainEnabled(!grainEnabled)}
-                  className={`px-4 py-1 rounded text-xs font-mono font-bold border transition-colors ${
-                    grainEnabled
-                      ? 'bg-green-950 border-green-500 text-green-300'
-                      : 'bg-black border-white/20 text-white/40'
-                  }`}
+                  className={`px-4 py-1 rounded text-xs font-mono font-bold border transition-colors ${grainEnabled
+                    ? 'bg-green-950 border-green-500 text-green-300'
+                    : 'bg-black border-white/20 text-white/40'
+                    }`}
                 >
                   {grainEnabled ? 'ACTIVADO' : 'DESACTIVADO'}
                 </button>
@@ -274,7 +269,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
       )}
 
       {/* =========================================================================
-          MODAL 2: CONTACTO (LINKS, EMAIL, LINKEDIN, GITHUB)
+        MODAL 2: CONTACTO (EMAIL, GITHUB)
       ========================================================================= */}
       {activeModal === 'contact' && (
         <div
@@ -299,23 +294,8 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
               </p>
 
               <div className="space-y-3 pt-2">
-                {/* LinkedIn */}
                 <a
-                  href="https://www.linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 rounded bg-white/5 hover:bg-white/10 border border-white/15 hover:border-blue-400 text-white transition-all group"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-blue-400 font-bold text-lg font-mono">in</span>
-                    <span className="font-medium tracking-wider">LinkedIn Profesional</span>
-                  </div>
-                  <span className="text-xs text-white/40 group-hover:text-blue-300 font-mono">Abrir ↗</span>
-                </a>
-
-                {/* GitHub */}
-                <a
-                  href="https://github.com/CrpProgamer"
+                  href="https://github.com/RedKris0"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between p-3 rounded bg-white/5 hover:bg-white/10 border border-white/15 hover:border-green-400 text-white transition-all group"
@@ -327,7 +307,6 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
                   <span className="text-xs text-white/40 group-hover:text-green-300 font-mono">Ver Repos ↗</span>
                 </a>
 
-                {/* Email */}
                 <a
                   href="mailto:cristobal.rojas.perez@example.com"
                   className="flex items-center justify-between p-3 rounded bg-white/5 hover:bg-white/10 border border-white/15 hover:border-[#ff9015] text-white transition-all group"
@@ -341,13 +320,12 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
               </div>
             </div>
 
-            {/* Botón Atrás con la cápsula ovalada */}
             <div className="flex justify-center mt-8 pt-4 border-t border-white/10">
               <button
                 onClick={() => setActiveModal(null)}
                 className="rounded-full bg-white/10 hover:bg-white/20 border border-white/30 px-10 py-1.5 text-white font-mono text-sm tracking-[0.35em] uppercase transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
               >
-                A t r á s
+                Atrás
               </button>
             </div>
           </div>
@@ -377,7 +355,7 @@ export default function OutlastMainMenu({ onStartGame, onResetGame }) {
                 <strong>Desarrollado con:</strong> Astro, React Three Fiber, Three.js, Tailwind CSS y Web Audio API.
               </p>
               <p className="text-white/50 text-[11px] pt-2">
-                Homenaje no comercial a la saga Outlast (propiedad de Red Barrels Inc.). Todos los datos analíticos, pipelines de ETL y dashboards corresponden al trabajo técnico de Cristóbal Rojas Pérez.
+                Homenaje no comercial a la saga Outlast (propiedad de Red Barrels Inc.)
               </p>
             </div>
 
