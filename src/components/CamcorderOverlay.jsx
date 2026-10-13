@@ -15,7 +15,7 @@ export const playCamcorderSound = (type) => {
   }
 };
 
-export default function OutlastCamcorderOverlay({
+export default function CamcorderOverlay({
   isDocumentOrTerminalOpen = false,
   isActive = false,
   isPrewarming = false,

@@ -51,10 +51,13 @@ npm run build
 ## Arquitectura
 
 - `src/pages/index.astro`: documento principal y metadatos.
-- `src/components/DesktopScene.jsx`: escena 3D, cámara y coordinación de overlays.
-- `src/components/WindowsXPScreen.jsx`: login y terminal interactiva.
+- `src/components/DesktopScene.jsx`: estado y coordinación general de la experiencia.
+- `src/components/Screen.jsx`: login y terminal interactiva.
 - `src/components/InvestigationFiles.jsx`: storytelling, evidencia y conclusiones del caso Colchagua.
-- `src/components/OutlastDocumentOverlay.jsx`: perfil profesional.
+- `src/components/MainMenu.jsx`: navegación principal y accesos directos.
+- `src/components/ProfileOverlay.jsx`: perfil profesional.
+- `src/components/CamcorderOverlay.jsx`: interfaz y controles de la videocámara.
+- `src/components/scene/`: entorno 3D, escritorio interactivo y controlador de cámara.
 - `src/utils/`: rutas de recursos, audio y preparación de modelos.
 - `public/`: modelos, texturas, sonidos y archivo Power BI descargable.
 
@@ -72,7 +75,7 @@ El workflow `.github/workflows/deploy.yml` se activa con cada push a `main`, con
 
 ## Uso de inteligencia artificial
 
-ChatGPT/Codex se utilizó como apoyo para auditoría, programación, depuración y redacción. Las fuentes, métricas, decisiones y conclusiones fueron revisadas contra los archivos reproducibles del proyecto. 
+ChatGPT/Codex se utilizó como apoyo para auditoría, programación, depuración y redacción. Las fuentes, métricas, decisiones y conclusiones fueron revisadas contra los archivos reproducibles del proyecto.
 
 ## Créditos
 

@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 
-export default function OutlastDocumentOverlay({ onClose }) {
+export default function ProfileOverlay({ onClose }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   return (

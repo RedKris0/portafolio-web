@@ -21,7 +21,7 @@ const playTerminalBeep = () => {
 
 export const TERMINAL_PASSWORD = '1234';
 
-export default function WindowsXPScreen({ isZoomedIn = false, onZoomIn = () => { }, onClose = () => { }, onLoginFailure = () => { }, onOpenInvestigation = () => { } }) {
+export default function Screen({ isZoomedIn = false, onZoomIn = () => { }, onClose = () => { }, onLoginFailure = () => { }, onOpenInvestigation = () => { } }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [username, setUsername] = useState('crojas');

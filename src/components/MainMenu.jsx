@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { playSound } from '../utils/audioManager.js';
 import { assetPath } from '../utils/assetPath.js';
 
-export default function OutlastMainMenu({ onStartGame, onResetGame, onOpenInvestigation }) {
+export default function MainMenu({ onStartGame, onResetGame, onOpenInvestigation }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [activeModal, setActiveModal] = useState(null); // 'options' | 'contact' | 'credits' | null
   const [emailCopied, setEmailCopied] = useState(false);
