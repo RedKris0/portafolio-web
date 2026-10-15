@@ -239,7 +239,7 @@ export default function Screen({ isZoomedIn = false, onZoomIn = () => { }, onClo
               {/* Columna Izquierda: Mensaje de bienvenida oficial */}
               <div className="w-1/2 text-right pr-10 flex flex-col items-end justify-center select-none">
                 <h2 className="text-3xl font-normal text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] mb-1">
-                  Para comenzar,
+                  Para comenzar.
                 </h2>
                 <p className="text-xl font-light text-blue-100 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] mb-6">
                   haga clic en su nombre de usuario
